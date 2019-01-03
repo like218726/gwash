@@ -102,7 +102,7 @@ class Menu extends Base {
             if ($res === false) {
                 return $this->ajaxError('操作失败');
             } else {
-            	return $this->ajaxSuccess('添加成功');
+            	return $this->ajaxSuccess('操作成功');
             }
         } else {
             $originList = model('SystemMenu')->where(['level'=>['in',['0','1']]])->order('sort asc')->select()->toArray();
@@ -127,7 +127,7 @@ class Menu extends Base {
     public function open() {
     	if ($this->request->isPost()) {
     		$id = trim(input('post.id/d'));
-    		$result = Db::name('SystemMenu')->where(['id'=>$id])->count();
+    		$result = Db::name('system_menu')->where(['id'=>$id])->count();
     		if (!$result) {
     			return $this->ajaxError('参数非法');
     		}
@@ -135,7 +135,7 @@ class Menu extends Base {
 	        if ($res === false) {
 	            return $this->ajaxError('操作失败');
 	        } else {
-	            return $this->ajaxSuccess('添加成功');
+	            return $this->ajaxSuccess('操作成功');
 	        }    		
     	}
     }
@@ -149,7 +149,7 @@ class Menu extends Base {
     public function close() {
     	if ($this->request->isPost()) {
     		$id = trim(input('post.id/d'));
-    		$result = Db::name('SystemMenu')->where(['id'=>$id])->count();
+    		$result = Db::name('system_menu')->where(['id'=>$id])->count();
     		if (!$result) {
     			return $this->ajaxError('参数非法');
     		}
@@ -157,7 +157,7 @@ class Menu extends Base {
 	        if ($res === false) {
 	            return $this->ajaxError('操作失败');
 	        } else {
-	            return $this->ajaxSuccess('添加成功');
+	            return $this->ajaxSuccess('操作成功');
 	        }
     	}
        
@@ -188,7 +188,7 @@ class Menu extends Base {
             if ($res === false) {
                 return $this->ajaxError('操作失败');
             } else {
-                return $this->ajaxSuccess('编辑成功');
+                return $this->ajaxSuccess('操作成功');
             }
         }
     }
@@ -201,7 +201,7 @@ class Menu extends Base {
     public function del() {
     	if ($this->request->isPost()) {
     		$id = trim(input('post.id/d'));
-    		$result = Db::name('SystemMenu')->where(['id'=>$id])->count();
+    		$result = Db::name('system_menu')->where(['id'=>$id])->count();
     		if (!$result) {
     			return $this->ajaxError('参数非法');
     		}
@@ -215,7 +215,7 @@ class Menu extends Base {
     		if ($res === false) {
                 return $this->ajaxError('操作失败');
             } else {
-                return $this->ajaxSuccess('编辑成功');
+                return $this->ajaxSuccess('操作成功');
             }  		
     	}
     }
