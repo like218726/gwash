@@ -13,9 +13,11 @@ class SystemMenu extends Model {
 	 * 
 	 * 通过菜单ID查询其信息
 	 * 
+	 * 
 	 */
-	public function getMenuInfoById($id) {
+	public function getMenuInfoById($id,$status) {
 		$result = Db::name('system_menu')->where(['id'=>$id])->find();
+		$result ? $result['status'] = $status[$result['status']] : "";
 		return $result;
 	}
 }

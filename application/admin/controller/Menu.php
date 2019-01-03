@@ -59,10 +59,10 @@ class Menu extends Base {
 	        }
 	        
 	        $total = model('SystemMenu')->where($where)->count();
-	        $info = model('SystemMenu')->where($where)->limit($start, $limit)->select();  
-	        foreach ($info as $k=>$list) {
-	        	$info[$k]['status'] = $this->status_arr[$list['status']];
-	        	$menu_info = model('SystemMenu')->getMenuInfoById($list['fid']);
+	        $info = model('SystemMenu')->where($where)->limit($start, $limit)->select()->toArray();  
+	        foreach ($info as $k=>$list) { 
+	       		$info[$k]['status'] = $list['status'] ? '隐藏' : '显示'; 	
+	        	$menu_info = model('SystemMenu')->getMenuInfoById($list['fid'],$this->status_arr); 
 	        	if ($list['level'] == '1') {
 	        		$info[$k]['name'] = '|---'.$list['name'];
 	        	} elseif ($list['level'] == '2') {
