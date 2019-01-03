@@ -1,0 +1,136 @@
+{include file="public/base" /}
+<block name="main">
+    <fieldset class="layui-elem-field">
+        <legend>系统配置 - {$detail['id']? '编辑' : '新增'}参数字典</legend>
+        <div class="layui-field-box">
+            <form class="layui-form" action="" enctype="multipart/form-data">
+                {if condition="isset($detail['id'])"}
+                    <input type="hidden" name="id" value="{$detail['id']}">
+                {/if}
+                <div class="layui-form-item">
+                    <label class="layui-form-label"><span style="color:red">*</span> 名称</label>
+                    <div class="layui-input-block">
+                        <input type="text" name="name" required value="{$detail['name'] ? $detail['name'] : ''}" lay-verify="required" placeholder="用于config函数调用，只能使用字母,数字,下划线且不能重复，例如：CONFIG_TYPE_LIST" class="layui-input">
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <label class="layui-form-label"><span style="color:red">*</span> 标题</label>
+                    <div class="layui-input-block">
+                        <input type="text" name="title" required value="{$detail['title'] ? $detail['title'] : ''}" lay-verify="required" placeholder="参数字典标题" class="layui-input">
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <label class="layui-form-label"><span style="color:red">*</span> 类型</label>
+                    <div class="layui-input-block">
+                        <select name="type" lay-verify="">
+                            <option value="0" {if $detail['type'] eq '0'}selected{/if}>数字</option>
+                            <option value="1" {if $detail['type'] eq '1'}selected{/if}>字符</option>
+                            <option value="2" {if $detail['type'] eq '2'}selected{/if}>文本</option>
+                            <option value="3" {if $detail['type'] eq '3'}selected{/if}>数组</option>
+                            <option vvalue="4" {if $detail['type'] eq '4'}selected{/if}>枚举</option>
+                        </select>						
+                     </div>
+                </div>
+
+                <div class="layui-form-item">
+                    <label class="layui-form-label"><span style="color:red">*</span> 参数值</label>
+                    <div class="layui-input-block">
+                        <textarea rows="8" cols="100" class="textarea" name="value" required value="{$detail['value'] ? $detail['value'] : ''}" lay-verify="required" placeholder="参数值:一行代表一个值；如果是字符串或者数值，直接填写；如果是数组，就需要每行一个键:值，中间用英文引号分割，例如：
+0:数字
+1:字符
+2:文本
+3:数组
+4:枚举" >{$detail['value'] ? $detail['value'] : ''}</textarea>
+                    </div>
+                </div>
+
+                <div class="layui-form-item">
+                    <label class="layui-form-label"><span style="color:red">*</span> 参数项</label>
+                    <div class="layui-input-block">
+                        <textarea rows="8" cols="100" class="textarea" name="extra"  value="{$detail['extra'] ? $detail['extra'] : ''}" placeholder="如果是枚举型，需要配置该项,其他类型无需填写该项。参数项:一行代表一个值；每行一个键:值，中间用英文引号分割，例如：
+0:关闭,1:开启" >{$detail['extra'] ? $detail['extra'] : ''}</textarea>
+                    </div>
+                </div>
+
+                <div class="layui-form-item">
+                    <label class="layui-form-label"><span style="color:red">*</span> 备注说明</label>
+                    <div class="layui-input-block">
+                        <textarea rows="8" cols="100" class="textarea" name="remark"  value="{$detail['remark'] ? $detail['remark'] : ''}"  placeholder="备注说明" >{$detail['remark'] ? $detail['remark'] : ''}</textarea>
+                    </div>
+                </div>
+
+                <div class="layui-form-item">
+                    <div class="layui-input-block">
+                        <button class="layui-btn" lay-submit lay-filter="admin-form">立即提交</button>
+                        <button type="reset" class="layui-btn layui-btn-primary">重置</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </fieldset>
+</block>
+<block name="myScript">
+
+    {if condition="isset($detail['id'])"}
+        <script>
+
+            layui.use('form', function(){
+                var form = layui.form();
+                form.on('submit(admin-form)', function(data){
+                    $.ajax({
+                        type: "POST",
+                        url: '{:url("edit")}',
+                        data: data.field,
+                        success: function(msg){
+                            if( msg.code == 1 ){
+                                parent.location.reload();
+                            }else{
+                                parent.layer.msg(msg.msg, {
+                                    icon: 5,
+                                    shade: [0.6, '#393D49'],
+                                    time:1500
+                                });
+                            }
+                        }
+                    });
+                    return false;
+                });
+
+            });
+
+        </script>
+        {else /}
+        <script>
+            layui.use('form', function(){
+                var form = layui.form();
+                form.on('submit(admin-form)', function(data){
+                    $.ajax({
+                        type: "POST",
+                        url: '{:url("add")}',
+                        data: data.field,
+                        success: function(msg){
+                            if( msg.code == 1 ){
+                                parent.location.reload();
+                            }else{
+                                parent.layer.msg(msg.msg, {
+                                    icon: 5,
+                                    shade: [0.6, '#393D49'],
+                                    time:1500
+                                });
+                            }
+                        }
+                    });
+                    return false;
+                });
+
+            });
+        </script>
+    {/if}
+
+    <style>
+        .textarea{
+            padding-left: 10px;
+            border: 1px solid #e6e6e6;
+        }
+    </style>
+</block>

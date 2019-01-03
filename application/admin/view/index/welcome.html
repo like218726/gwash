@@ -1,0 +1,88 @@
+{include file="public/base" /}
+<block name="main">
+    <fieldset class="layui-elem-field">
+        <div class="layui-field-box">
+            <table class="layui-table" lay-even>
+            	<thead>
+            		<tr>
+            			<td colspan="6" align="center">{$welcome}</td>
+            		</tr>
+            	</thead>
+                <tbody>
+                    <tr>
+                        <td>服务器操作系统：</td>
+                        <td>{$sys_info.os}</td>
+                        <td>服务器域名/IP：</td>
+                        <td>{$sys_info.domain} [ {$sys_info.ip} ]</td>
+                        <td>服务器环境：</td>
+                        <td>{$sys_info.web_server}</td>
+                    </tr>
+                    <tr>
+                        <td>PHP 版本：</td>
+                        <td>{$sys_info.phpv}</td>
+                        <td>Mysql 版本：</td>
+                        <td>{$sys_info.mysql_version}</td>
+                        <td>GD 版本</td>
+                        <td>{$sys_info.gdinfo}</td>
+                    </tr>
+                    <tr>
+                        <td>文件上传限制：</td>
+                        <td>{$sys_info.fileupload}</td>
+                        <td>脚本运行占用最大内存：</td>
+                        <td>{$sys_info.memory_limit}</td>
+                        <td>最大执行时间：</td>
+                        <td>{$sys_info.max_ex_time}</td>
+                    </tr>
+                    <tr>
+                        <td>安全模式：</td>
+                        <td>{$sys_info.safe_mode}</td>
+                        <td>Zlib支持：</td>
+                        <td>{$sys_info.zlib}</td>
+                        <td>Curl支持：</td>
+                        <td>{$sys_info.curl}</td>
+                    </tr>
+					<tr>
+						<td>MySQL数据库是否支持续连接： </td>
+						<td>{$sys_info.allow_persistent}</td>
+						<td>MySQL最大连接数： </td>
+						<td>{$sys_info.max_links}</td>
+						<td>系统当前版本： </td>
+						<td>{$sys_info.version}</td>
+					</tr>
+					<tr>
+						<td>ZEND版本： </td>
+						<td>{$sys_info.zend_version}</td>
+						<td>服务器端口： </td>
+						<td>{$sys_info.server_port}</td>
+						<td>浏览器： </td>
+						<td>{$sys_info.user_agent}</td>
+					</tr>
+					<tr>
+						<td>根目录： </td>
+						<td>{$sys_info.doucment_root}</td>
+						<td>通信协议： </td>
+						<td>{$sys_info.protocol}</td>
+						<td>请求方法： </td>
+						<td>{$sys_info.request_method}</td>
+					</tr>
+					<tr>
+						<td>服务器时间 / 北京时间： </td>
+						<td>{$sys_info.server_time} / {$sys_info.beijing_time}</td>
+						<td>ThinkPHP版本： </td>
+						<td>{$sys_info.thinkphp_version}</td>
+						<td>当前用户IP： </td>
+						<td>{$sys_info.remote_addr}</td>
+					</tr>
+					<tr>
+						<td>系统目录： </td>
+						<td>{$sys_info.systemRoot}</td>
+						<td>服务器语言： </td>
+						<td>{$sys_info.language}</td>
+						<td>服务器CGI版本： </td>
+						<td>{$sys_info.server_software}</td>
+					</tr>
+            </table>
+			{eq name="os" value="WINNT"}{include file="index/windowsSysInfo" /}{else/}{include file="index/linuxSysInfo" /}{/eq}			
+        </div>
+    </fieldset>
+</block>

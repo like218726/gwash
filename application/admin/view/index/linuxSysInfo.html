@@ -1,0 +1,45 @@
+<table class="layui-table" lay-even>
+	<thead>
+		<tr>
+			<th>Linux 系统信息</th>
+		</tr>
+	</thead>
+	<tbody>
+		<tr>
+			<td>系统位数：</td>
+			<td>$linuxSysInfo.os_num</td>
+		</tr>
+		<tr>
+			<td>系统版本：</td>
+			<td>$linuxSysInfo.os_version</td>
+		</tr>		
+		<tr>
+			<td>正在运行的进程数</td>
+			<td>
+				<table class="layui-table" style="" lay-even>
+					<tbody>
+						<tr>
+							<td>CPU占有量：</td>
+							<td>$linuxSysInfo.memory_status.cpu_usage</td>
+						</tr>
+						<tr>
+							<td>内存占有量：</td>
+							<td>$linuxSysInfo.memory_status.mem_usage</td>
+						</tr>
+						<tr>
+							<td>磁盘可用空间大小：</td>
+							<td>$linuxSysInfo.memory_status.hd_avail</td>
+						</tr>
+						<tr>
+							<td>磁盘已用空间：</td>
+							<td>$linuxSysInfo.memory_status.hd_usage</td>
+						</tr>
+						<tr>
+							<td>正在运行的进程数：</td>
+							<td>$linuxSysInfo.memory_status.tast_running</td>
+						</tr>
+					</tbody>
+				</table>
+			</td>
+		</tr>
+	</tbody>

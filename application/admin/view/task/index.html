@@ -1,0 +1,228 @@
+{include file="public/base" /}
+<script type="text/javascript" src="/static/admin/plugins/Copy/ZeroClipboard.min.js"></script>
+<script type="text/javascript" src="/static/admin/plugins/Copy/artDialog.js"></script>
+<link rel="stylesheet" type="text/css" href="/static/admin/plugins/Copy/default.css">
+<block name="main"> 
+    <fieldset class="layui-elem-field">
+        <legend>系统配置 - 系统任务</legend>
+        <div class="layui-field-box">
+            <form class="layui-form" id="form-admin-add" action="">
+            	
+                <div class="layui-inline">
+                    <label class="layui-form-label label-width">模块：</label>
+                    <div class="layui-input-inline">
+                        <select name="type">
+                        	<option value="">请选择</option>
+							{foreach $module as $key=>$value}
+								{if $module eq ''}
+								<option value="{$key}">{$value}</option>
+								{else /}
+								<option value="{$key}" {if $key eq $s_module}selected{/if}>{$value}</option>
+								{/if}
+							{/foreach}                    	
+	                    </select>
+                    </div>
+                </div>					
+				
+                <div class="layui-inline">
+                    <label class="layui-form-label label-width">任务名称：</label>
+                    <div class="layui-input-inline">
+                        <input type="text" name="task_name" value="{$name}" placeholder="任务名称" class="layui-input" onkeyup='clearSymbol(this)'>
+                    </div>
+                </div>					
+				
+                <div class="layui-inline">
+                    <label class="layui-form-label label-width">状态：</label>
+                    <div class="layui-input-inline">
+                        <select name="is_on">
+                        	<option value="">请选择</option>
+							{foreach $is_on as $key=>$value}
+								{if $s_is_on eq ''}
+								<option value="{$key}">{$value}</option>
+								{else /}
+								<option value="{$key}" {if $key eq $s_is_on}selected{/if}>{$value}</option>
+								{/if}
+							{/foreach}                    	
+	                    </select>
+                    </div>
+                </div>					
+				
+                <div class="layui-inline">
+                    <span class="layui-btn sub">查询</span>
+                </div>
+            </div>
+            </form>
+            <table class="layui-table" id="list-admin" lay-even>
+                <thead>
+                <tr>
+                    <th>模块</th>
+                    <th>任务名称</th>
+                    <th>周期时间</th>
+                    <th>状态</th>
+                    <th>最后执行时间</th>
+					<th>允许的IP地址</th>
+                    <th>操作</th>
+                </tr>
+                </thead>
+            </table>
+        </div>
+    </fieldset>
+</block>
+<input type="button" id="test" value="ceshi11111" onclick="copycmd(test)">
+<block name="myScript">
+    <script>
+    	
+		/**
+		 * 
+		 * @param {Object} obj
+		 * 
+		 */
+        function clearSymbol(obj) {
+            obj.value = obj.value.replace(/[%]/g,""); //清除"%"特殊字符
+        }		
+		
+        /**
+         * 格式化时间戳
+         * @param fmt
+         * @returns {*}
+         * @constructor
+         */
+        Date.prototype.Format = function (fmt) {
+            var o = {
+                "M+": this.getMonth() + 1, //月份
+                "d+": this.getDate(), //日
+                "h+": this.getHours(), //小时
+                "m+": this.getMinutes(), //分
+                "s+": this.getSeconds(), //秒
+                "q+": Math.floor((this.getMonth() + 3) / 3), //季度
+                "S": this.getMilliseconds() //毫秒
+            };
+            if (/(y+)/.test(fmt)) fmt = fmt.replace(RegExp.$1, (this.getFullYear() + "").substr(4 - RegExp.$1.length));
+            for (var k in o)
+                if (new RegExp("(" + k + ")").test(fmt)) fmt = fmt.replace(RegExp.$1, (RegExp.$1.length == 1) ? (o[k]) : (("00" + o[k]).substr(("" + o[k]).length)));
+            return fmt;
+        };
+
+        layui.use(['layer', 'form'], function() {
+            $(document).on('click', '.confirm', function () {
+                var ownObj = $(this);
+                layer.confirm(ownObj.attr('data-info'), {
+                    btn: ['确定','取消'] //按钮
+                }, function(){
+                    $.ajax({
+                        type: "POST",
+                        url: ownObj.attr('data-url'),
+                        data: {id:ownObj.attr('data-id')},
+                        success: function(msg){
+                            if( msg.code == 1 ){
+                                location.reload();
+                            }else{
+                                layer.msg(msg.msg, {
+                                    icon: 5,
+                                    shade: [0.6, '#393D49'],
+                                    time:1500
+                                });
+                            }
+                        }
+                    });
+                });
+            });
+
+            $(document).on('click', '.edit', function () {
+                var ownObj = $(this);
+                layer.open({
+                    type: 2,
+                    area: ['80%', '80%'],
+                    maxmin: true,
+                    content: ownObj.attr('data-url')+'&id='+ownObj.attr('data-id')
+                });
+            });
+
+            var myFun = function (query) {
+                query = query || '';
+                return $('#list-admin').DataTable({
+                    dom: 'rt<"bottom"ifpl><"clear">',
+                    ordering: false,
+                    autoWidth: false,
+                    searching:false,
+                    serverSide: true,
+                    ajax: {
+                        url:'ajaxGetIndex' + query,
+                        type: 'POST',
+                        dataSrc: function ( json ) {
+                            if( json.code == 0 ){
+                                parent.layer.msg(json.msg, {
+                                    icon: 5,
+                                    shade: [0.6, '#393D49'],
+                                    time:1500
+                                });
+                            }else{
+                                return json.data;
+                            }
+                        }
+                    },
+                    columnDefs:[
+                        {
+                            "targets":6,
+                            "render":function(data, type, row){
+                                var returnStr = '';
+								var cmd = row.cmd;
+								var base_path = '{$base_path}';
+								var real_php_path = '{$real_php_path}';
+								if(row.process_num>0){
+									cmd += ' --_g_run_child_task_num='+row.process_num;
+								}
+								//returnStr += '<span id="path_'+row.task_id+'" style="display:none">'+real_php_path+' -f '+base_path+''+cmd+'</span>'; 
+                                returnStr += '<a id="path_'+row.task_id+'" class="layui-btn layui-btn-normal" onclick="copycmd('+row.task_id+')" class="copy" style="cursor:pointer;" data-text="656454654654654">复制命令</a>&nbsp;';
+								returnStr += '<a id="path2_'+row.task_id+'" class="layui-btn layui-btn-danger" href="javascript:runView('+row.task_id+')"  style="cursor:pointer;">执行</a>&nbsp;';
+								returnStr += '<span id="copy_record_'+row.task_id+'" class="layui-btn" onclick="copy_record('+row.task_id+',\''+row.platform_code+'\');" class="copy_record" style="cursor:pointer;">复制记录</span>&nbsp;';
+								return returnStr;
+                            }
+                        }
+                    ],
+                    iDisplayLength : 20,
+                    aLengthMenu : [20, 30, 50],
+                    columns: [
+                        {"data": "type"},
+                        {"data": "task_name"},
+                        {"data": "lx_time" },
+                        {"data": "is_on" },
+						{"data": "last_exec_time"},
+                        {"data": "allow_ips" },
+                        {"data": null }
+                    ]
+                });
+            };
+            var myTable = myFun();
+            $('.sub').on("click", function(){
+                myTable.destroy();
+                myTable = myFun('?'+ $('#form-admin-add').serialize());
+            });
+        });
+    </script>
+	<script>
+		function copyText(text, callback){ // text: 要复制的内容， callback: 回调
+		    var tag = document.createElement('input');
+		    tag.setAttribute('id', 'cp_hgz_input');
+		    tag.value = text;
+		    document.getElementsByTagName('body')[0].appendChild(tag);
+		    document.getElementById('cp_hgz_input').select();
+		    document.execCommand('copy');
+		    document.getElementById('cp_hgz_input').remove();
+		    if(callback) {callback(text)}
+		}
+		
+		function copycmd(id) {
+			var str = $("#path_"+id).attr('data-text');
+			console.log(str);
+			 copyText( str , function (){
+				alert(str);
+			})						
+		}
+		function copyToClipBoard(id){
+		 	var clipBoardContent=$("#"+id).html();
+			window.clipboardData.setData("Text",clipBoardContent)
+			alert('{@复制成功}！') ;
+		}		
+	</script>
+</block>

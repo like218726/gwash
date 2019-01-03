@@ -1,0 +1,19 @@
+{include file="public/base" /}
+<block name="main">
+    <fieldset class="layui-elem-field">
+        <div class="layui-field-box">
+            <table class="layui-table" lay-even>
+                <tbody>
+                	{volist name="auth" id="vo"}
+                    <tr>
+                        <td>{$vo.name}：</td>
+                        <td>{$vo.value}</td>
+                    </tr>
+					{/volist}
+					<tr>
+						<td colspan="2" align="center">{$copyright}</td>
+					</tr>
+            </table>
+        </div>
+    </fieldset>
+</block>

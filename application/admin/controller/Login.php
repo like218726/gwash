@@ -1,0 +1,142 @@
+<?php
+namespace app\admin\controller;
+
+/**
+ * 
+ * 登陆
+ * @author Administrator
+ *
+ */
+use think\Request;
+
+use think\Loader;
+
+class Login extends Base {
+	
+	/**
+	 * 
+	 * 登陆入口
+	 * 
+	 */
+	public function index() {
+		if ($this->request->isGet()) {
+			return $this->fetch();
+		}
+	}
+	
+	/**
+	 * 
+	 * 用户登陆
+	 * 
+	 */
+    public function login() {
+    	if ($this->request->isPost()) {
+    	    $pass = md5(input('post.password/s'));
+	        $user = input('post.username/s');
+	
+	        $challenge = input('post.geetest_challenge');
+	        $validate = input('post.geetest_validate');
+	        if(!$challenge || md5($challenge) != $validate){
+	            return $this->ajaxError('请先通过验证！');
+	        }
+	
+	        $userInfo = model('SystemAdminUser')->where(array('username' => $user, 'password' => $pass))->find()->toArray();
+	
+	        if (!empty($userInfo)) {
+	            if ($userInfo['status']) {
+	
+	                //保存用户信息和登录凭证
+	                cache($userInfo['id'], session_id(), config('ONLINE_TIME'));
+	                session('uid', $userInfo['id']);
+	
+	                //更新用户数据
+	                $userData = model('SystemAdminUserData')->where(array('uid' => $userInfo['id']))->find();
+	                $data = array();
+	                $request = Request::instance();
+	                $ip = $request->ip();
+	
+	                if ($userData) {
+	                    $data['loginTimes'] = $userData['loginTimes'] + 1;
+	                    $data['lastLoginIp'] = $ip;
+	                    $data['lastLoginTime'] = time();
+	                    model('SystemAdminUserData')->where(array('uid' => $userInfo['id']))->update($data);
+	                } else {
+	                    $data['loginTimes'] = 1;
+	                    $data['uid'] = $userInfo['id'];
+	                    $data['lastLoginIp'] = $ip;
+	                    $data['lastLoginTime'] = time();
+	                    model('SystemAdminUserData')->save($data);
+	                }
+	                Loader::import('ip.IpLocation', EXTEND_PATH, '.class.php');  
+		    		$iplocation = new \IpLocation();
+		    		$ipinfo = $iplocation->getlocation($ip); // 获取域名服务器所在的位置           
+	                $admin_user_data['last_ip'] = get_client_ip();
+	                $admin_user_data['last_login'] = time();
+	                $admin_user_data['last_city'] = GBK2UTF8($ipinfo['country']);
+	                $admin_user_data['login_count'] = $userInfo['login_count'] + 1;
+	                model('SystemAdminUser')->where(array('id' => $userInfo['id']))->update($admin_user_data);	                
+	                return $this->ajaxSuccess('登录成功');
+	            } else {
+	                return $this->ajaxError('用户已被封禁，请联系管理员');
+	            }
+	        } else {
+	            return $this->ajaxError('用户名密码不正确');
+	        }    		
+    	}
+
+    }	
+    
+    /**
+     * 
+     * 退出
+     * 
+     */
+    public function logOut() {
+    	if ($this->request->isGet()) {
+    		cache(session('uid'), null);
+	        session('[destroy]');
+	        $this->success('退出成功', 'login/index');
+    	}
+    }    
+    
+    /**
+     * 
+     * 修改用户信息
+     * 
+     */
+    public function changeUser() {
+        if ($this->request->isPost()) {
+            $data = input('post.');
+            $newData = array();
+            if (!empty($data['nickname'])) {
+                $newData['nickname'] = $data['nickname'];
+            }
+            if (!empty($data['password'])) {
+                $newData['password'] = md5($data['password']);
+                $newData['updateTime'] = time();
+            }
+            $res = model('SystemAdminUser')->where(array('id' => session('uid')))->update($newData);
+
+            if ($res === false) {
+                return $this->ajaxError('修改失败');
+            } else {
+                return $this->ajaxSuccess('修改成功');
+            }
+        } else { 
+            $userInfo = model('SystemAdminUser')->where(array('id' => session('uid')))->find();
+            return $this->fetch("changeUser",["uname"=>$userInfo['username']]);
+        }    	
+    } 
+
+    /**
+     * 权限提示页
+     * @author wzj
+     * 2018/4/16
+     */
+    public function ruleTip(){
+    	if ($this->request->isGet()) {
+    		return view("login/ruleTip");
+    	}
+    }
+    
+}

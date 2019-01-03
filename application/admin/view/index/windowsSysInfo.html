@@ -1,0 +1,105 @@
+<table class="layui-table" lay-even>
+	<thead>
+		<tr>
+			<td colspan="6" align="center">Windows 系统信息</td>
+		</tr>
+	</thead>
+    <tbody>
+        <tr>
+            <td>{$windowssysinfo.system_info.one}</td>
+            <td>{$windowssysinfo.system_info.two}</td>
+            <td>{$windowssysinfo.system_info.three}</td>
+            <td>{$windowssysinfo.system_info.four}</td>
+            <td>{$windowssysinfo.system_info.five}</td>
+            <td>{$windowssysinfo.system_info.six}</td>
+        </tr>
+        <tr>
+            <td>系统配置：</td>
+            <td colspan="5">{$windowssysinfo.system_config}</td>
+        </tr>
+		<tr>
+            <td>系统运行时长：</td>
+            <td colspan="5">{$windowssysinfo.run_time}</td>
+        </tr>	
+		<tr>
+            <td>系统盘符：</td>
+            <td colspan="5" style="">
+				<table class="layui-table" style="" lay-even>
+					{foreach $windowssysinfo.disk_info as $key=>$value}               
+					<tr>
+						<td>{$value.name}</td>
+						<td>{$value.data.one}</td>
+						<td>{$value.data.two}</td>
+						<td>{$value.data.three}</td>
+						<td>{$value.data.four}</td>
+						<td>{$value.data.five}</td>
+						<td>{$value.data.six}</td>
+					</tr>
+					{/foreach}
+				</table>
+			</td>
+        </tr>	
+        <tr>
+            <td>{$windowssysinfo.physical_memory.one}</td>
+            <td>{$windowssysinfo.physical_memory.two}</td>
+            <td>{$windowssysinfo.physical_memory.three}</td>
+            <td>{$windowssysinfo.physical_memory.four}</td>
+            <td>{$windowssysinfo.physical_memory.five}</td>
+            <td>{$windowssysinfo.physical_memory.six}</td>
+        </tr>	
+        <tr>
+            <td>{$windowssysinfo.virtual_memory.one}</td>
+            <td>{$windowssysinfo.virtual_memory.two}</td>
+            <td>{$windowssysinfo.virtual_memory.three}</td>
+            <td>{$windowssysinfo.virtual_memory.four}</td>
+            <td>{$windowssysinfo.virtual_memory.five}</td>
+            <td>{$windowssysinfo.virtual_memory.six}</td>
+        </tr>
+		<tr>
+            <td>网卡名称：</td>
+            <td colspan="5">{$windowssysinfo.network_card}</td>
+        </tr>	
+        <tr>
+            <td>{$windowssysinfo.netstat.code}</td>
+            <td>{$windowssysinfo.netstat.data.one}</td>
+            <td>{$windowssysinfo.netstat.data.two}</td>
+            <td>{$windowssysinfo.netstat.data.three}</td>
+            <td colspan="2">{$windowssysinfo.netstat.data.four}</td>
+        </tr>
+		<tr>
+            <td>操作系统详情：</td>
+            <td colspan="5" style="">
+				<table class="layui-table" style="" lay-even>
+					<tr>
+						<th colspan="6" align="center">操作系统所有信息</th>
+					</tr>
+					{foreach $windowssysinfo.window_info.out as $key=>$value}               
+					<tr>
+						<td>{$value}</td>
+					</tr>
+					{/foreach}					
+				</table>
+				<table class="layui-table" style="" lay-even>
+					<tr>
+						<th colspan="6" align="center">电脑信息</th>
+					</tr>
+					{foreach $windowssysinfo.window_info.out2 as $key=>$value}               
+					<tr>
+						<td>{$value}</td>
+					</tr>
+					{/foreach}					
+				</table>
+				<table class="layui-table" style="" lay-even>
+					<tr>
+						<th colspan="6" align="center">IP配置信息</th>
+					</tr>
+					{foreach $windowssysinfo.window_info.out3 as $key=>$value}               
+					<tr>
+						<td>{$value}</td>
+					</tr>
+					{/foreach}					
+				</table>				
+			</td>
+        </tr>
+	</tbody>												
+</table>

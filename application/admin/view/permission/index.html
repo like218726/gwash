@@ -1,0 +1,206 @@
+{include file="public/base" /}
+<block name="main"> 
+    <fieldset class="layui-elem-field">
+        <legend>系统配置 - 权限管理</legend>
+        <div class="layui-field-box">
+            <form class="layui-form" id="form-admin-add" action="">
+            	
+                <div class="layui-inline">
+                    <label class="layui-form-label label-width">权限组：</label>
+                    <div class="layui-input-inline">
+                        <input type="text" name="name" value="" placeholder="权限组" class="layui-input" onkeyup='clearSymbol(this)'>
+                    </div>
+                </div>				
+
+                <div class="layui-inline">
+                    <label class="layui-form-label label-width">状态：</label>
+                    <div class="layui-input-inline">
+                    	<select name="status">						
+							{foreach $status_arr as $key=>$value}
+								{if $status eq ''}
+								<option value="{$key}">{$value}</option>
+								{else /}
+								<option value="{$key}" {if $key eq $status}selected{/if}>{$value}</option>
+								{/if}
+							{/foreach}
+                    	</select>
+                    </div>
+                </div>	
+				
+                <div class="layui-inline">
+                    <span class="layui-btn sub">查询</span>
+                </div>
+            </div>
+            </form>
+			<span class="layui-btn layui-btn-normal api-add"><i class="layui-icon">&#xe608;</i> 新增</span>
+            <table class="layui-table" id="list-admin" lay-even>
+                <thead>
+                <tr>
+                    <th>编号</th>
+                    <th>权限组</th>
+                    <th>描述</th>
+                    <th>访问授权</th>
+                    <th>成员授权</th>
+                    <th>状态</th>
+                    <th>操作</th>
+                </tr>
+                </thead>
+            </table>
+        </div>
+    </fieldset>
+</block>
+<block name="myScript">
+    <script>
+    	
+		/**
+		 * 
+		 * @param {Object} obj
+		 * 
+		 */
+        function clearSymbol(obj) {
+            obj.value = obj.value.replace(/[%]/g,""); //清除"%"特殊字符
+        }		
+		
+        /**
+         * 格式化时间戳
+         * @param fmt
+         * @returns {*}
+         * @constructor
+         */
+        Date.prototype.Format = function (fmt) {
+            var o = {
+                "M+": this.getMonth() + 1, //月份
+                "d+": this.getDate(), //日
+                "h+": this.getHours(), //小时
+                "m+": this.getMinutes(), //分
+                "s+": this.getSeconds(), //秒
+                "q+": Math.floor((this.getMonth() + 3) / 3), //季度
+                "S": this.getMilliseconds() //毫秒
+            };
+            if (/(y+)/.test(fmt)) fmt = fmt.replace(RegExp.$1, (this.getFullYear() + "").substr(4 - RegExp.$1.length));
+            for (var k in o)
+                if (new RegExp("(" + k + ")").test(fmt)) fmt = fmt.replace(RegExp.$1, (RegExp.$1.length == 1) ? (o[k]) : (("00" + o[k]).substr(("" + o[k]).length)));
+            return fmt;
+        };
+
+        layui.use(['layer', 'form'], function() {
+            $(document).on('click', '.confirm', function () {
+                var ownObj = $(this);
+                layer.confirm(ownObj.attr('data-info'), {
+                    btn: ['确定','取消'] //按钮
+                }, function(){
+                    $.ajax({
+                        type: "POST",
+                        url: ownObj.attr('data-url'),
+                        data: {id:ownObj.attr('data-id')},
+                        success: function(msg){
+                            if( msg.code == 1 ){
+                                location.reload();
+                            }else{
+                                layer.msg(msg.msg, {
+                                    icon: 5,
+                                    shade: [0.6, '#393D49'],
+                                    time:1500
+                                });
+                            }
+                        }
+                    });
+                });
+            });
+
+            $('.api-add').on('click', function () {
+                layer.open({
+                    type: 2,
+                    area: ['80%', '80%'],
+                    maxmin: true,
+                    content: '{:url("add")}'
+                });
+            });
+
+            $(document).on('click', '.edit', function () {
+                var ownObj = $(this);
+                layer.open({
+                    type: 2,
+                    area: ['80%', '80%'],
+                    maxmin: true,
+                    content: ownObj.attr('data-url')+'&id='+ownObj.attr('data-id')
+                });
+            });
+
+            var myFun = function (query) {
+                query = query || '';
+                return $('#list-admin').DataTable({
+                    dom: 'rt<"bottom"ifpl><"clear">',
+                    ordering: false,
+                    autoWidth: false,
+                    searching:false,
+                    serverSide: true,
+                    ajax: {
+                        url:'ajaxGetIndex' + query,
+                        type: 'POST',
+                        dataSrc: function ( json ) {
+                            if( json.code == 0 ){
+                                parent.layer.msg(json.msg, {
+                                    icon: 5,
+                                    shade: [0.6, '#393D49'],
+                                    time:1500
+                                });
+                            }else{
+                                return json.data;
+                            }
+                        }
+                    },
+                    columnDefs:[
+                        {
+                            "targets":3,
+                            "render": function(data, type, row){
+                                var returnStr = '';   
+								returnStr += '<span class="layui-btn edit" ' +
+                                    'data-id="' + row.id +'"  data-url="rule.html?id='+row.id+'">访问授权</span>';
+								return returnStr;	
+                            }
+                        },{
+                            "targets":4,
+                            "render": function(data, type, row){
+                                var returnStr = '';   
+								returnStr += '<span class="layui-btn edit" ' +
+                                    'data-id="' + row.id +'" data-url="member.html?id='+row.id+'">成员授权</span>';
+								return returnStr;	
+                            }
+                        },{
+                            "targets":6,
+                            "render":function(data, type, row){
+                                var returnStr = '';
+                                returnStr += '<span class="layui-btn layui-btn-danger confirm" data-info="你确定禁用当前权限组么？" ' +
+                                    'data-id="' + row.id +'" data-url="{:url(\'close\')}">禁用</span>';
+								returnStr += '<span class="layui-btn confirm" data-info="你确定启用当前权限组么？" ' +
+                                    'data-id="' + row.id +'" data-url="{:url(\'open\')}">启用</span>';	
+								returnStr += '<span class="layui-btn edit layui-btn-normal" ' +
+                                    'data-id="' + row.id +'" data-url="edit.html?id='+row.id+'">编辑</span>';	
+                                returnStr += '<span class="layui-btn layui-btn-danger confirm" ' +
+                                    'data-id="' + row.id +'" data-info="你确定删除当前权限组么？" data-url="{:url(\'del\')}">删除</span>';
+                                return returnStr;
+                            }
+                        }
+                    ],
+                    iDisplayLength : 20,
+                    aLengthMenu : [20, 30, 50],
+                    columns: [
+                        {"data": 'id'},
+                        {"data": "name"},
+                        {"data": "description" },
+                        {"data": null},
+                        {"data": null },
+						{"data": "status" },
+						{"data": null },
+                    ]
+                });
+            };
+            var myTable = myFun();
+            $('.sub').on("click", function(){
+                myTable.destroy();
+                myTable = myFun('?'+ $('#form-admin-add').serialize());
+            });
+        });
+    </script>
+</block>
