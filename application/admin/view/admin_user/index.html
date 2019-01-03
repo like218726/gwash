@@ -43,7 +43,8 @@
                     <th>登录次数</th>
                     <th>最后登录时间</th>
                     <th>状态</th>
-					<th>登陆IP</th>
+					<th>最后登陆IP</th>
+					<th>最后登陆城市</th>
                     <th>操作</th>
                 </tr>
                 </thead>
@@ -154,7 +155,7 @@
                     },
                     columnDefs:[
                         {
-                            "targets":8,
+                            "targets":9,
                             "render":function(data, type, row){
                                 var returnStr = '';
                                 returnStr += '<span class="layui-btn layui-btn-danger confirm" data-info="你确定禁用当前用户么？" ' +
@@ -176,10 +177,11 @@
                         {"data": "username"},
                         {"data": "name" },
                         {"data": "nickname" },
-                        {"data": "loginTimes" },
-						{"data": "lastLoginTime" },
+                        {"data": "login_count" },
+						{"data": "last_login" },
 						{"data": "status" },
-						{"data": "lastLoginIp" },
+						{"data": "last_ip" },
+						{"data": "last_city" },
                         {"data": null }
                     ]
                 });

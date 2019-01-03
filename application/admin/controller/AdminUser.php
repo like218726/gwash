@@ -50,7 +50,7 @@ class AdminUser extends Base {
                     ->where($where)
                     ->count(); 
 
-	        $listInfo = Db::table('gwash_system_admin_user')->alias('a')->field('a.id,a.username,a.nickname,a.status,c.name')
+	        $listInfo = Db::table('gwash_system_admin_user')->alias('a')->field('a.id,a.username,a.nickname,a.status,a.login_count,a.last_login,a.last_ip,a.last_city,c.name')
 	                    ->join('gwash_system_auth_group_access b','a.id = b.uid','left')
 	                    ->join('gwash_system_auth_group c','b.groupId = c.id','left')
 	                    ->order('id', 'desc')->limit($start, $limit)
@@ -61,16 +61,9 @@ class AdminUser extends Base {
 	        if ($listInfo) {
 	        	foreach ($listInfo as $key=>$value) {       		
 		        	if (in_array($value['id'],$superAdmin)){
-		        		$userData = model('SystemAdminUserData')->where(['uid'=>$value['id']])->find()->toArray();  
-		        		$listInfo[$key]['lastLoginIp'] = !empty($userData) ? $userData['lastLoginIp'] : '';
-		                $listInfo[$key]['name'] = '超级管理员';
-		                $listInfo[$key]['loginTimes'] = !empty($userData) ? $userData['loginTimes'] : '';
-		                $listInfo[$key]['lastLoginTime'] = !empty($userData) ? date('Y-m-d H:i:s', $userData['lastLoginTime']) : "";	                
+		                $listInfo[$key]['name'] = '超级管理员';	                
 		            }
-		            $userData = model('SystemAdminUserData')->where(['uid'=>$value['id']])->find();  
-	        		$listInfo[$key]['lastLoginIp'] = !empty($userData) ? $userData['lastLoginIp'] : '';
-	                $listInfo[$key]['loginTimes'] = !empty($userData) ? $userData['loginTimes'] : '';
-	                $listInfo[$key]['lastLoginTime'] = !empty($userData) ? date('Y-m-d H:i:s', $userData['lastLoginTime']) : "";	
+	                $listInfo[$key]['last_login'] = $value['last_login'] ? date('Y-m-d H:i:s', $value['last_login']) : "";	
 	                $listInfo[$key]['status'] = $value['status']== 1 ? '启用' : '禁用';
 	        	}
 	        } else {
