@@ -127,7 +127,7 @@ class Index extends Base {
     		Cache::set('auth',$auth1);
     		Cache::set('copyright',$copyright1);
     		Cache::has('auth') ? $auth = Cache::get('auth') : $auth;
-    		Cache::has('copyright') ? Cache::get('copyright') : $copyright = $copyright1;
+    		Cache::has('copyright') ? $copyright = Cache::get('copyright') : $copyright = $copyright1;
     		$this->assign('auth',$auth);
     		$this->assign('copyright',$copyright);
     		return $this->fetch('ShowAuth');
@@ -141,20 +141,16 @@ class Index extends Base {
      */
     public function version() {
     	if ($this->request->isGet()) {  
-    		$auth1['0'] = ['name'=>'当前系统','value'=>config('APP_NAME').'管理系统'];
-    		$auth1['1'] = ['name'=>'版本号','value'=>'V 1.0'];
-    		$auth1['2'] = ['name'=>'发布次数','value'=>'1'];
-    		$auth1['3'] = ['name'=>'版本信息','value'=>'1.0'];
-    		$auth1['4'] = ['name'=>'发布者','value'=>'JT'];
-    		$auth1['5'] = ['name'=>'发布时间','value'=>'2018-12-24'];    		
-    		$copyright1 = str_replace('year', date('Y'), config('COPYRIGHT'));
-    		$copyright1 = str_replace('company', config('COMPANY_NAME'), $copyright1);
-    		Cache::set('auth', $auth1);
-    		Cache::set('copyright', $copyright1);
-    		Cache::has('auth') ? $auth = Cache::get('auth') : $auth = $auth1;
-    		Cache::has('copyright') ? $copyright = Cache::get('copyright') : $copyright = $copyright1;
-    		$this->assign('auth',$auth);
-    		$this->assign('copyright',$copyright);
+    		$version['0'] = ['name'=>'当前系统','value'=>config('APP_NAME').'管理系统'];
+    		$version['1'] = ['name'=>'版本号','value'=>'V 1.0'];
+    		$version['2'] = ['name'=>'发布次数','value'=>'1'];
+    		$version['3'] = ['name'=>'版本信息','value'=>'1.0'];
+    		$version['4'] = ['name'=>'发布者','value'=>'JT'];
+    		$version['5'] = ['name'=>'发布时间','value'=>'2018-12-24'];    		
+    		Cache::set('version', $version);
+    		Cache::has('version') ? $version = Cache::get('version') : $version;
+    		$this->assign('version',$version);
+    		$this->assign('copyright',Cache::get('copyright'));
     		return $this->fetch();
     	}
     } 

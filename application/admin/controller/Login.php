@@ -40,7 +40,7 @@ class Login extends Base {
 	            return $this->ajaxError('请先通过验证！');
 	        }
 	
-	        $userInfo = model('SystemAdminUser')->where(array('username' => $user, 'password' => $pass))->find()->toArray();
+	        $userInfo = model('SystemAdminUser')->where(array('username' => $user, 'password' => $pass))->find();
 	
 	        if (!empty($userInfo)) {
 	            if ($userInfo['status']) {

@@ -364,6 +364,6 @@ INSERT INTO `gwash_system_menu` VALUES ('37', 'Ajax查询Log列表', '36', 'Log/
 INSERT INTO `gwash_system_menu` VALUES ('38', '删除', '36', 'Log/del', '0', '0', '1', '', '2');
 INSERT INTO `gwash_system_menu` VALUES ('39', '详情', '36', 'Log/showDetail', '0', '0', '1', '', '2');
 INSERT INTO `gwash_system_menu` VALUES ('40', '授权信息', '3', 'Index/ShowAuth', '0', '0', '0', '', '0');
-INSERT INTO `gwash_system_menu` VALUES ('41', '版本信息', '3', 'Index/ShowAuth', '0', '0', '0', '', '0');
+INSERT INTO `gwash_system_menu` VALUES ('41', '版本信息', '3', 'Index/version', '0', '0', '0', '', '0');
 INSERT INTO `gwash_system_menu` VALUES ('42', '系统任务', '3', 'Task/index', '0', '3', '0', '', '0');
 INSERT INTO `gwash_system_menu` VALUES ('43', 'Ajax查询列表', '42', 'Task/ajaxGetIndex', '0', '0', '0', '', '0');
