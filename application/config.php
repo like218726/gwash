@@ -248,7 +248,7 @@ return [
     //T环境项目目录地址
     'SITE_URL' => 'http://www.gwash.com/',
     //后台管理员
-    'USER_ADMINISTRATOR' => array(1),    
+    'USER_ADMINISTRATOR' => [1],    
     'CONFIG_TYPE_LIST' => [
     	'0' => '数字',
     	'1' => '字符',

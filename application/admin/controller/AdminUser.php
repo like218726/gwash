@@ -187,6 +187,8 @@ class AdminUser extends Base {
 	        if ($res === false) {
 	            return $this->ajaxError('操作失败');
 	        } else {
+	        	Db::name('system_admin_user_action')->where(array('id',$id))->delete();
+	        	Db::name('system_admin_user_data')->where(array('id',$id))->delete();	        	
 	            return $this->ajaxSuccess('操作成功');
 	        }    		
     	}
