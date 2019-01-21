@@ -68,7 +68,6 @@
         </div>
     </fieldset>
 </block>
-<input type="button" id="test" value="ceshi11111" onclick="copycmd(test)">
 <block name="myScript">
     <script>
     	
@@ -147,8 +146,8 @@
                     searching:false,
                     serverSide: true,
                     ajax: {
-                        url:'ajaxGetIndex' + query,
-                        type: 'POST',
+                        url:"{:url('ajaxGetIndex')}" + query,
+                        type: 'GET',
                         dataSrc: function ( json ) {
                             if( json.code == 0 ){
                                 parent.layer.msg(json.msg, {
@@ -172,9 +171,8 @@
 								if(row.process_num>0){
 									cmd += ' --_g_run_child_task_num='+row.process_num;
 								}
-								//returnStr += '<span id="path_'+row.task_id+'" style="display:none">'+real_php_path+' -f '+base_path+''+cmd+'</span>'; 
-                                returnStr += '<a id="path_'+row.task_id+'" class="layui-btn layui-btn-normal" onclick="copycmd('+row.task_id+')" class="copy" style="cursor:pointer;" data-text="656454654654654">复制命令</a>&nbsp;';
-								returnStr += '<a id="path2_'+row.task_id+'" class="layui-btn layui-btn-danger" href="javascript:runView('+row.task_id+')"  style="cursor:pointer;">执行</a>&nbsp;';
+								returnStr += '<a id="path_'+row.task_id+'" class="layui-btn layui-btn-normal" onclick="copycmd('+row.task_id+')" class="copy" style="cursor:pointer;" data-text="' + real_php_path + ' -f ' + base_path + cmd +'">复制命令</a>&nbsp;';
+								returnStr += '<a id="path2_'+row.task_id+'" class="layui-btn layui-btn-danger" href="javascript:runView('+row.task_id+')" data-text="' + real_php_path + ' -f ' + base_path + cmd +'" style="cursor:pointer;">执行</a>&nbsp;';
 								returnStr += '<span id="copy_record_'+row.task_id+'" class="layui-btn" onclick="copy_record('+row.task_id+',\''+row.platform_code+'\');" class="copy_record" style="cursor:pointer;">复制记录</span>&nbsp;';
 								return returnStr;
                             }
@@ -201,6 +199,7 @@
         });
     </script>
 	<script>
+		/*复制命令的业务逻辑*/
 		function copyText(text, callback){ // text: 要复制的内容， callback: 回调
 		    var tag = document.createElement('input');
 		    tag.setAttribute('id', 'cp_hgz_input');
@@ -211,18 +210,50 @@
 		    document.getElementById('cp_hgz_input').remove();
 		    if(callback) {callback(text)}
 		}
-		
+		/*复制命令*/
 		function copycmd(id) {
 			var str = $("#path_"+id).attr('data-text');
-			console.log(str);
 			 copyText( str , function (){
-				alert(str);
+				layer.alert(str);
 			})						
-		}
-		function copyToClipBoard(id){
-		 	var clipBoardContent=$("#"+id).html();
-			window.clipboardData.setData("Text",clipBoardContent)
-			alert('{@复制成功}！') ;
-		}		
+		}	
+		
+		/*复制命令*/
+		function copy_record(task_id, pcode)
+		{
+			if(!pcode)
+			{
+				layer.alert('该记录不支持复制');
+				return ;
+			}
+			
+			layer.confirm('确定要复制一条新的任务？',function(){
+				var url = "{:url('copy')}";
+				$.post(url, {task_id : task_id}, function(data){
+					if (data.code == 200) {
+						layer.closeAll();
+						$("#list-admin").DataTable().ajax.reload(); 
+					} else {
+                        layer.msg(data.msg, {
+                            icon: 5,
+                            shade: [0.6, '#393D49'],
+                            time:1500
+                        });							
+					}
+				}, "json");				
+			})
+		}	
+		
+		/*执行命令*/
+		function runView(id) {
+			var cmd=$("#path2_"+id).attr('data-text');	
+			layer.confirm('确定要执行？', function(){
+				var d = new Date();
+				var url = '{$BaseUrl}/auto_task/RunOneCommand?'+'type=client&id='+id+'&timestamp='+d.getTime()+'&command_script='+encodeURIComponent(cmd);
+				var title = '任务执行';
+				layer.closeAll();
+				window.open(url);return;
+			})
+		};				
 	</script>
 </block>

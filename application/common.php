@@ -30,6 +30,15 @@ function xdebug($var, $exit = false, $method = true)
 }
 
 /**
+ * 
+ * 获取系统缓存路径
+ * 
+ */
+function get_sys_cache_path(){
+	return RUNTIME_PATH;
+}
+
+/**
  * 把返回的数据集转换成Tree
  * @param $list
  * @param string $pk

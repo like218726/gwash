@@ -33,7 +33,7 @@
             var form = layui.form();
             form.on('submit(admin-form)', function(data){
                 $.ajax({
-                    type: "POST",
+                    type: "GET",
                     url: '{:url("group")}',
                     data: data.field,
                     success: function(msg){

@@ -4,9 +4,132 @@
  *
  */
 namespace app\admin\model;
+use think\Db;
+
 use think\Model;
 class SystemTaskModel extends Model{
-
+    
+	/**
+	 * 从配置文件刷新生成命令到数据库
+	 * Enter description here ...
+	 */
+	public function refreshCmd()
+	{
+		require_once CONFIG_PATH.'/AutoTaskConfig.php';
+		$app_path = APP_PATH;
+		$datas = array();
+		foreach($services as $row)
+		{	
+			if(isset($datas[$row['code']])){
+				return $this->setError(-1, __('任务配置文件中的任务代码').$row['code'].__('重复了'));
+			}
+			$newData = array();
+			$newData['task_name'] = $row['name'];
+			$newData['task_code'] = $row['code'];
+			$newData['type'] = $row['type'];
+			$newData['lx_time'] = $row['time'];
+			$newData['description'] = $row['desc'];
+			$newData['cmd'] = $row['exec'];
+			$newData['platform_code'] = isset($row['plat_code']) ? $row['plat_code'] : '';
+			$newData['process_num'] = isset($row['process']) && $row['process']>0 ?  $row['process'] : 0;
+			$datas[$newData['task_code']] = $newData;
+			
+			//刷新复制的命令
+			if($newData['platform_code']){
+				Db::name('system_auto_task')->where('task_code',$row['code'])->update($datas);
+			}
+		}
+		$services = $datas;
+		$datas = array_values($datas);
+		$this->massInsert($this->table, $datas, 2, 'task_name,cmd,type,description,process_num');
+		$rows = $this->getAll();
+		
+		foreach($rows as $row)
+		{
+			$code = $row['task_code'];
+			if(!isset($services[$code])){
+				$sql = "delete from $this->table where task_code='$code' and is_copy=0";
+				$this->db->execute($sql);
+			}
+		}
+		
+		return true;
+	}
+	
+	//复制记录
+	public function copy($task_id)
+	{  
+		$row = Db::name('system_auto_task')->where('task_id',$task_id)->find();
+		if(!$row){
+			return array('code'=>'-1', 'msg'=>'复制错误');
+		}
+		
+		unset($row['task_id']);
+		$copy_num = $this->coptyNum($row['task_code'], $row['type']);
+		if($copy_num>=10){
+			return array('code'=>'-1', 'msg'=>'相同的任务已经存在10条，不允许再复制');
+		}
+			
+		$copy_num = $copy_num + 1;	
+		$data = [];
+		$data['task_code'] = $row['task_code'];	
+		$data['task_name'] = str_replace($row['is_copy'], "", $row['task_name']).$copy_num;
+		$data['type'] = $row['type'];
+		$data['cmd'] = $row['cmd'];
+		$data['platform_code'] = $row['platform_code'];
+		$data['description'] = $row['description'];
+		$data['is_copy'] = $copy_num; 
+		$data['shop_ids'] = '';
+		$data['is_on'] = 0;
+		$data['last_exec_time'] = '';			
+		$id = Db::name('system_auto_task')->insertGetId($data);
+		if ($id === false) {
+			return array('code'=>'-1', 'msg'=>'复制失败');
+		} else {
+			return array('code'=>'200', 'msg'=>'复制成功');
+		}
+	}
+		
+	/**
+	 * 复制记录
+	 */
+	private function coptyNum($task_code, $type)
+	{
+		$where['task_code'] = $task_code;
+		$where['type'] = $type;
+		$rows = Db::name('system_auto_task')->where($where)->select();    
+		$copy_num = 0;
+		foreach($rows as $row){
+			if($row['is_copy']>$copy_num){
+				$copy_num = $row['is_copy'];
+			}
+		}
+		return $copy_num;
+	}	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
    public $table = 'home_auto_task';
    public $tableAcl = 'home_acl';
    public $tableShop = 'shop';
@@ -190,7 +313,7 @@ class SystemTaskModel extends Model{
 	 * 从配置文件刷新生成命令到数据库
 	 * Enter description here ...
 	 */
-	public function refreshCmd()
+	public function refreshCmd2()
 	{
 		require_once CONFIG_PATH.'/AutoTaskConfig.php';
 		$app_path = APP_PATH;
@@ -264,7 +387,7 @@ class SystemTaskModel extends Model{
 	/**
 	 * 复制记录
 	 */
-	private function coptyNum($task_code, $type)
+	private function coptyNum2($task_code, $type)
 	{
 		$rows = $this->where(array('task_code'=>$task_code, 'type'=>$type))->getAll();
 		
@@ -279,7 +402,7 @@ class SystemTaskModel extends Model{
 	
 	
 	//复制记录
-	public function copy($task_id)
+	public function copy2($task_id)
 	{
 		$row = $this->getRow($task_id);
 		if(!$row){

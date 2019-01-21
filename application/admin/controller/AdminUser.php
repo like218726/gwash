@@ -25,13 +25,13 @@ class AdminUser extends Base {
      * 
      */
 	public function ajaxGetIndex() {
-		if ($this->request->isPost()) {
+		if ($this->request->isGet()) {
 			$where = [];
-			$start = trim(input('post.start/d'));
-			$lenght = trim(input('post.length/d'));
+			$start = trim(input('get.start/d'));
+			$lenght = trim(input('get.length/d'));
 			$start = $start ? $start : 0;
 			$limit = $lenght ? $lenght : 20;
-			$draw = trim(input('post.draw/d')) ? trim(input('post.draw/d')) : 0;
+			$draw = trim(input('get.draw/d')) ? trim(input('get.draw/d')) : 0;
 
 			$username = trim(input('username/s'));
 			$status = trim(input('status'));

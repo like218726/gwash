@@ -45,7 +45,7 @@ class Menu extends Base {
      * 
      */
     public function ajaxGetIndex() {
-    	if ($this->request->isPost()) {
+    	if ($this->request->isGet()) {
 	        $start = trim(input('post.start/d')) ? trim(input('post.start/d')): 0;
 	        $limit = trim(input('post.length/d')) ? trim(input('post.length/d')) : 20;
 	        $draw = trim(input('post.draw/d')); 

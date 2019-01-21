@@ -25,8 +25,10 @@ public function index(){
 		$this->assign('name','');
 		$this->assign('is_on',array(''=>'请选择','0'=>'关闭','1'=>'开启'));
 		$this->assign('s_is_on','');
-		$this->assign('base_path', substr(APP_PATH, 0, -6));
-		$this->assign('real_php_path', $this->realPath());		
+		$this->assign('base_path', $_SERVER['DOCUMENT_ROOT'].'/');  
+		$BaseUrl = $_SERVER['SERVER_PORT']<>80 ? $_SERVER['REQUEST_SCHEME'].":".$_SERVER['SERVER_PORT']."://".$_SERVER['SERVER_NAME'].$_SERVER['SCRIPT_NAME'] : $_SERVER['REQUEST_SCHEME']."://".$_SERVER['SERVER_NAME'].$_SERVER['SCRIPT_NAME'];	
+		$this->assign('real_php_path', $this->realPath());	
+		$this->assign('BaseUrl', $BaseUrl);	
 		return $this->fetch('index');
 	}
 }
@@ -37,7 +39,7 @@ public function index(){
  * 
  */
 public function ajaxGetIndex() {
-	if ($this->request->isPost()) {
+	if ($this->request->isGet()) {
         $postData = input();  
         $start = $postData['start'] ? $postData['start'] : 0;
         $limit = $postData['length'] ? $postData['length'] : 20;
@@ -53,7 +55,7 @@ public function ajaxGetIndex() {
         	$where['is_on'] = ['like','%'.trim(input('is_on')).'%'];
         }		
         $total = Db::name('system_auto_task')->where($where)->count();
-        $info = Db::name('system_auto_task')->where($where)->limit($start, $limit)->select();
+        $info = Db::name('system_auto_task')->where($where)->limit($start, $limit)->order('type,task_code,task_id desc')->select();
   
         if (is_array($info)) {
         	$model = new SystemTaskModel();
@@ -77,13 +79,24 @@ public function ajaxGetIndex() {
 
 /**
  * 
- *  复制cmd
- *  .
+ * 复制命令
  */
-public function CopyCmd()
-{
-	$this->showMessage(1, 1);
+public function Copy()
+{ 
+	if($this->request->isPost()){
+		$task_id = input('task_id','0','trim');
+		$model = new SystemTaskModel();  	
+		$result = $model->copy($task_id); 
+		exit(json_encode($result));
+	}
 }
+
+
+
+
+
+
+
 
 	public $commandDir = 'System'; //系统任务文件夹名称
 	public $taskListPath = 'Home/Configuration/Task/TaskList';
@@ -104,7 +117,7 @@ public function CopyCmd()
 		$this->assign('module', $model->moduleType());
 		$this->assign('shopHtml', $this->shopSelect(), 2);
 		$this->assign('base_path', BASE_PATH);
-		$this->assign('real_php_path', $this->realPath());
+		$this->assign('real_php_path', $this->realPath());  
 		$this->assign('title', __('系统任务'));
 		$this->display($this->taskListPath);
 	}
@@ -410,7 +423,7 @@ public function CopyCmd()
 					}
 				}
 			}
-			$php_path = str_replace('\\','/',$path);
+			$php_path = str_replace('\\','/',$path); 
 			$php_path = str_replace(array('/ext/','/ext'),array('/','/'),$php_path);
 			$real_path = $php_path.'php.exe';
 		}else{

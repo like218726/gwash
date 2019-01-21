@@ -37,7 +37,7 @@ class Permission extends Base {
      * 
      */
     public function ajaxGetIndex() {
-		if ($this->request->isPost()) {
+		if ($this->request->isGet()) {
 			$where = [];
 			$start = trim(input('start/d'));
 			$lenght = trim(input('length/d'));
@@ -208,7 +208,7 @@ class Permission extends Base {
      * 将管理员加入组的组列表显示
      */
     public function group() {
-        if ($this->request->isPost()) {
+        if ($this->request->isGet()) {
             $data = $this->request->post();
             if (!$data['uid']) {
             	 $this->error('用户ID不能为空');

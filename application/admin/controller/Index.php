@@ -143,10 +143,10 @@ class Index extends Base {
     	if ($this->request->isGet()) {  
     		$version['0'] = ['name'=>'当前系统','value'=>config('APP_NAME').'管理系统'];
     		$version['1'] = ['name'=>'版本号','value'=>config('APP_VERSION')];
-    		$version['2'] = ['name'=>'发布次数','value'=>'8'];
+    		$version['2'] = ['name'=>'发布次数','value'=>config('VERSION_NUM')];
     		$version['3'] = ['name'=>'版本信息','value'=>substr(config('APP_VERSION'), 1)];
-    		$version['4'] = ['name'=>'发布者','value'=>'JT'];
-    		$version['5'] = ['name'=>'发布时间','value'=>'2019-01-03'];    		
+    		$version['4'] = ['name'=>'发布者','value'=>config('COMPANY_NAME')];
+    		$version['5'] = ['name'=>'发布时间','value'=>config('VERSION_TIME')];    		
     		Cache::set('version', $version);
     		Cache::has('version') ? $version = Cache::get('version') : $version;
     		$this->assign('version',$version);

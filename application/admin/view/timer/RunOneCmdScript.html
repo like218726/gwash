@@ -1,0 +1,63 @@
+{include file="public/base" /}
+<body style="background:#FFF;" >
+<style>
+#cmd_div,pre{margin:30;font-size:12px;}
+</style>
+<block name="main"> 
+<div style="margin:30;padding:20px;background-color:black;color:white" id="cmd_div">
+	<input type='hidden' id='task_id' value='{$task_id}'/>
+	<input type='hidden' id='log_file_offset' value='0'/>
+</div>
+</block>
+<block name="myScript">
+<script type="text/javascript">
+var max_try = 5;
+var each_num = 0;
+function get_run_result(){
+	var task_id = $("#task_id").val();
+	var log_file_offset = $("#log_file_offset").val();
+	var req_data = {'task_id':task_id,'log_file_offset':log_file_offset,'_req_tag': new Date().getTime()}
+	var url = "{$BaseUrl}/RunCmdScript/GetRunResult";
+	$.get(url, req_data ,function(return_str){
+		var result = process_return_str(return_str);
+		if (!result){
+			if(result===null){
+				if(each_num<max_try){
+					each_num++;
+					setTimeout('get_run_result()', 2000);
+				}
+			}else{
+				setTimeout('get_run_result()', 2000);
+			}
+		}
+	});
+}
+
+function process_return_str(return_str){
+	if (return_str == undefined || return_str == '')
+	{
+		return null;
+	}
+	var find_v = return_str.indexOf("####");
+	if(find_v===-1){
+		return null;
+	}
+	var log_file_offset = return_str.substr(0,find_v);
+	var html_str = return_str.slice(find_v+4);
+	if(html_str===''){
+		return null;
+	}
+	$("#log_file_offset").val(log_file_offset);
+	
+	html_str2 = html_str.replace(/\+/gim,' ');
+	html_str2 = html_str2.replace(/<##php_cli_task_end##>([^<]+)<\/##php_cli_task_end##>/gim,' ');
+	$("#cmd_div").append('<pre>'+html_str2+'</pre>');
+	
+	
+	scroll(0, 100000);
+	return false;
+}
+
+get_run_result();
+</script>
+</block>

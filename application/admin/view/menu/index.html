@@ -139,7 +139,7 @@
                     serverSide: true,
                     ajax: {
                         url:'ajaxGetIndex' + query,
-                        type: 'POST',
+                        type: 'GET',
                         dataSrc: function ( json ) {
                             if( json.code == 0 ){
                                 parent.layer.msg(json.msg, {

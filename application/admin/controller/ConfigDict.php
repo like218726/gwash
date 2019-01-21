@@ -34,7 +34,7 @@ class ConfigDict extends Base
      *  
      */
     public function ajaxgetindex() {
-    	if ($this->request->isPost()) {
+    	if ($this->request->isGet()) {
 			$where = [];
 			$start = trim(input('post.start/d'));
 			$lenght = trim(input('post.length/d'));
