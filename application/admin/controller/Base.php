@@ -168,30 +168,25 @@ class Base extends Controller {
         if ($isAdmin) {
             return true;
         } else {
-            if ($this->menuInfo['level'] !== 0) {
-                $authObj = new Auth();
-                $check = $authObj->check(strtolower($this->url), $this->uid);
-                if (!$check) {
-                    //start wzj 2018/4/16  修改没有权限时的跳转页面
-                    if (strtolower($this->url) == 'index/index'){ //登录时没有首页的权限直接返回登录页面
-                        $this->error(lang('_VALID_ACCESS_'), 'Login/index');
-                    } else {
-                        $request = Request::instance();
-                        if($request->isAjax()){
-                            $this->ajaxError(lang('_VALID_ACCESS_'))->send();
-                            exit;
-                        }else{
-                            $this->error(lang('_VALID_ACCESS_'), 'Login/ruleTip');
-                        }
-
+            $authObj = new Auth();
+            $check = $authObj->check(strtolower($this->url), $this->uid);
+            if (!$check) {
+                //start wzj 2018/4/16  修改没有权限时的跳转页面
+                if (strtolower($this->url) == 'index/index'){ //登录时没有首页的权限直接返回登录页面
+                    $this->error(lang('没有权限'), 'Login/index');
+                } else {
+                    $request = Request::instance();
+                    if($request->isAjax()){
+                        $this->ajaxError(lang('没有权限'))->send();
+                        exit;
+                    }else{
+                        $this->error(lang('没有权限'), 'Login/ruleTip');
                     }
-                    //end
 
-                    return $this->ajaxError(lang('_VALID_ACCESS_'));
                 }
             }
         }
-    }
+    }    
 
     /**
      * 根据菜单级别进行区别Log记录，当然，如果有更加细节的控制，也可以在这个函数内实现

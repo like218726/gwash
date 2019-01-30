@@ -126,7 +126,7 @@
                     type: 2,
                     area: ['80%', '80%'],
                     maxmin: true,
-                    content: ownObj.attr('data-url')+'&id='+ownObj.attr('data-id')
+                    content: ownObj.attr('data-url')+'?id='+ownObj.attr('data-id')
                 });
             });
 
@@ -163,7 +163,7 @@
 								returnStr += '<span class="layui-btn confirm" data-info="你确定启用当前用户么？" ' +
                                     'data-id="' + row.id +'" data-url="{:url(\'open\')}">启用</span>';	
 								returnStr += '<span class="layui-btn edit layui-btn-normal" ' +
-                                    'data-id="' + row.id +'" data-url="/permission/group.html?id='+row.id+'">授权</span>';	
+                                    'data-id="' + row.id +'" data-url="/permission/group">授权</span>';	
                                 returnStr += '<span class="layui-btn layui-btn-danger confirm" ' +
                                     'data-id="' + row.id +'" data-info="你确定删除当前用户么？" data-url="{:url(\'del\')}">删除</span>';
                                 return returnStr;

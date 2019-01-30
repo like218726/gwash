@@ -208,10 +208,10 @@ class Permission extends Base {
      * 将管理员加入组的组列表显示
      */
     public function group() {
-        if ($this->request->isGet()) {
+        if ($this->request->isPost()) {
             $data = $this->request->post();
             if (!$data['uid']) {
-            	 $this->error('用户ID不能为空');
+            	return $this->ajaxError('用户ID不能为空');
             }
             if (!isset($data['groupAccess'])) {
             	return $this->ajaxError("授权内容不能为空");
@@ -229,9 +229,9 @@ class Permission extends Base {
                 $insert = Db::name('system_auth_group_access')->insertGetId(array('uid' => $data['uid'], 'groupId' => $groupAccess));
             }
             if ($insert) {
-                $this->success('授权成功');
+                return $this->ajaxSuccess('授权成功');
             } else {
-                $this->error('授权失败');
+                return $this->ajaxError('授权失败');
             }
         } elseif ($this->request->isGet()) {    
 			$uid = trim(input('id'));
@@ -243,7 +243,7 @@ class Permission extends Base {
             $this->assign('uid',$uid);
             return $this->fetch();
         } else {  
-            $this->error('非法操作');
+            return $this->ajaxError('非法操作');
         }
     }
 

@@ -52,9 +52,16 @@
                 </div>
             </div>
             </form>
+			<span class="layui-btn layui-btn-normal api-add" data-info="确认要刷新命令吗?"><i class="layui-icon">&#xe608;</i> 刷新命令</span>
+			<span class="layui-btn layui-btn-normal open"><i class="layui-icon">&#xe608;</i> 开启</span>
+			<span class="layui-btn layui-btn-normal close"><i class="layui-icon">&#xe608;</i> 关闭</span>
+			<span class="layui-btn layui-btn-normal edit_time"><i class="layui-icon">&#xe608;</i> 批量修改时间</span>
+			<span class="layui-btn layui-btn-normal edit_ip"><i class="layui-icon">&#xe608;</i> 批量修改IP</span>
+			<span class="layui-btn layui-btn-normal is_on"><i class="layui-icon">&#xe608;</i> 总开关</span>
             <table class="layui-table" id="list-admin" lay-even>
                 <thead>
                 <tr>
+                	<th>&nbsp;</th>
                     <th>模块</th>
                     <th>任务名称</th>
                     <th>周期时间</th>
@@ -127,6 +134,48 @@
                 });
             });
 
+            $(".api-add").click(function(){
+				layer.confirm('你确定要刷新命令吗?',function(){	
+					$.post("{:url('RefreshCmd')}",function(data){
+						if (data.code == 200) {
+							location.reload();
+						} else {
+	                        layer.msg(data.msg, {
+	                            icon: 5,
+	                            shade: [0.6, '#393D49'],
+	                            time:1500
+	                        });							
+						}
+					},'json');							
+				})				
+            });
+
+            $(".open").click(function(){
+				layer.confirm('你确定要开启吗?',function(){
+					var checkObj = $("input[name='task_id']:checked");
+					var ids=''
+					var num = checkObj.length; 
+					checkObj.each(function(){
+						ids += $(this).val()+',';
+					});	
+					if (num<=0) {
+						layer.alert('操作不能为空!',{icon:2});	
+						return false;
+					}	
+					$.post("{:url('open')}",{'ids':ids,'is_on':1},function(data){
+						if (data.code == 200) {
+							location.reload();
+						} else {
+	                        layer.msg(data.msg, {
+	                            icon: 5,
+	                            shade: [0.6, '#393D49'],
+	                            time:1500
+	                        });							
+						}
+					},'json');							
+				})				
+            });			
+
             $(document).on('click', '.edit', function () {
                 var ownObj = $(this);
                 layer.open({
@@ -162,7 +211,14 @@
                     },
                     columnDefs:[
                         {
-                            "targets":6,
+							"targets": 0,
+							"render":function(data, type, row) {
+								var returnStr = '';
+								returnStr = '<input type="checkbox" name="task_id" value="' + row.task_id + '">';
+								return returnStr;
+							}
+						},{
+                            "targets":7,
                             "render":function(data, type, row){
                                 var returnStr = '';
 								var cmd = row.cmd;
@@ -181,6 +237,7 @@
                     iDisplayLength : 20,
                     aLengthMenu : [20, 30, 50],
                     columns: [
+						{"data": null },
                         {"data": "type"},
                         {"data": "task_name"},
                         {"data": "lx_time" },
@@ -249,7 +306,7 @@
 			var cmd=$("#path2_"+id).attr('data-text');	
 			layer.confirm('确定要执行？', function(){
 				var d = new Date();
-				var url = '{$BaseUrl}/auto_task/RunOneCommand?'+'type=client&id='+id+'&timestamp='+d.getTime()+'&command_script='+encodeURIComponent(cmd);
+				var url = '{$BaseUrl}/auto_task/RunOneCommand/type/client/id/'+id+'/timestamp/'+d.getTime()+'?command_script='+encodeURIComponent(cmd);
 				var title = '任务执行';
 				layer.closeAll();
 				window.open(url);return;

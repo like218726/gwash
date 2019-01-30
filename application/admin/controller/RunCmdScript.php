@@ -1,8 +1,12 @@
 <?php
 namespace app\admin\controller;
 
-class RunCmdScript extends Base{
-   
+use think\Loader;
+
+use think\Controller;
+
+class Runcmdscript extends Controller{
+   	  
 	function actionIndex(){
 		$cmd = $_REQUEST['cmd'];
 		$cmd = MC('Crypt','Lib/Core')->decode($cmd);
@@ -12,13 +16,21 @@ class RunCmdScript extends Base{
 			echo __("启动命令行失败");die;
 		}
 		$this->assign('task_id', $task_id);
-		$this->display('Timer/RunCmdScript');
+		$this->display('Timer/Runcmdscript');
 	}
 
-	function actionGetRunResult(){
+	/**
+	 * 
+	 * 获取记录
+	 * 2019-01-29
+	 * 
+	 */
+	function GetRunResult(){
 		$task_id = $_REQUEST['task_id'];
 		$log_file_offset = (int)@$_REQUEST['log_file_offset'];
-		$ret = MC('Cli','Lib/Core')->getRunResult($task_id,$log_file_offset);
+		Loader::import('Cli', EXTEND_PATH, '.php');  
+		$cli = new \Cli();
+		$ret = $cli->getRunResult($task_id,$log_file_offset); 
 		echo $ret;
 	}
 
@@ -46,7 +58,7 @@ class RunCmdScript extends Base{
 		$cmd .= join(' ',$cmd_params);
 		//echo $cmd;die;		
 		$cmd = MC('Crypt','Lib/Core')->encode($cmd);
-		$url = BASE_URL_PATH.'/index.php/Timer/RunCmdScript?cmd='.urlencode($cmd);
+		$url = BASE_URL_PATH.'/index.php/Timer/Runcmdscript?cmd='.urlencode($cmd);
 		echo "<script>location.href='".$url."';</script>";
 		die;
 	}

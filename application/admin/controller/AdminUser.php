@@ -27,6 +27,7 @@ class AdminUser extends Base {
 	public function ajaxGetIndex() {
 		if ($this->request->isGet()) {
 			$where = [];
+//			$where['a.id'] = ['not in',['1','2']];
 			$start = trim(input('get.start/d'));
 			$lenght = trim(input('get.length/d'));
 			$start = $start ? $start : 0;
@@ -92,7 +93,8 @@ class AdminUser extends Base {
     public function add() {
         if ($this->request->isPost()) {
             $data = $this->request->post();
-            $data['username'] = trim($data['username/s']);
+            $data['nickname'] = input('post.nickname','','trim');
+            $data['username'] = input('post.username','','trim');   
             $has = Db::name('system_admin_user')->where(array('username' => $data['username']))->count(); 
             if ($has) {
                 return $this->ajaxError('用户名已经存在，请重设！');

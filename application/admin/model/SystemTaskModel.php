@@ -15,13 +15,13 @@ class SystemTaskModel extends Model{
 	 */
 	public function refreshCmd()
 	{
-		require_once CONFIG_PATH.'/AutoTaskConfig.php';
+		require_once CONF_PATH.'admin/config/AutoTaskConfig.php';
 		$app_path = APP_PATH;
 		$datas = array();
 		foreach($services as $row)
 		{	
 			if(isset($datas[$row['code']])){
-				return $this->setError(-1, __('任务配置文件中的任务代码').$row['code'].__('重复了'));
+				return array('code'=>'101', 'msg'=>'任务配置文件中的任务代码'.$row['code'].'重复了');
 			}
 			$newData = array();
 			$newData['task_name'] = $row['name'];
@@ -36,24 +36,24 @@ class SystemTaskModel extends Model{
 			
 			//刷新复制的命令
 			if($newData['platform_code']){
-				Db::name('system_auto_task')->where('task_code',$row['code'])->update($datas);
+				Db::name('system_auto_task')->where('task_code',$row['code'])->update($newData);
 			}
 		}
 		$services = $datas;
 		$datas = array_values($datas);
-		$this->massInsert($this->table, $datas, 2, 'task_name,cmd,type,description,process_num');
-		$rows = $this->getAll();
+		Db::name('system_auto_task')->insertAll($datas, $options = array('task_code'), $replace = true);
+		
+		$rows = Db::name('system_auto_task')->select();
 		
 		foreach($rows as $row)
 		{
 			$code = $row['task_code'];
 			if(!isset($services[$code])){
-				$sql = "delete from $this->table where task_code='$code' and is_copy=0";
-				$this->db->execute($sql);
+				Db::name('system_auto_task')->where('task_code', $code)->where('is_copy', 0)->delete();
 			}
 		}
 		
-		return true;
+		return array('code'=>'200','msg'=>"成功");
 	}
 	
 	//复制记录

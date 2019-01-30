@@ -1,4 +1,5 @@
 {include file="public/base" /}
+<meta http-equiv="content-Type" content="text/html;charset=utf-8" />
 <body style="background:#FFF;" >
 <style>
 #cmd_div,pre{margin:30;font-size:12px;}
@@ -17,7 +18,7 @@ function get_run_result(){
 	var task_id = $("#task_id").val();
 	var log_file_offset = $("#log_file_offset").val();
 	var req_data = {'task_id':task_id,'log_file_offset':log_file_offset,'_req_tag': new Date().getTime()}
-	var url = "{$BaseUrl}/RunCmdScript/GetRunResult";
+	var url = "{$BaseUrl}/Runcmdscript/GetRunResult";
 	$.get(url, req_data ,function(return_str){
 		var result = process_return_str(return_str);
 		if (!result){

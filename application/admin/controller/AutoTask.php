@@ -163,7 +163,7 @@ class AutoTask extends Base{
 	}
 	
 	/**
-	 * 执行一条任务 20189-01-12
+	 * 执行一条任务 2019-01-12
 	 * Enter description here ...
 	 */
 	public function RunOneCommand()
@@ -221,6 +221,7 @@ class AutoTask extends Base{
 			echo "启动命令行失败";die;
 		}
 		$BaseUrl = $_SERVER['SERVER_PORT']<>80 ? $_SERVER['REQUEST_SCHEME'].":".$_SERVER['SERVER_PORT']."://".$_SERVER['SERVER_NAME'].$_SERVER['SCRIPT_NAME'] : $_SERVER['REQUEST_SCHEME']."://".$_SERVER['SERVER_NAME'].$_SERVER['SCRIPT_NAME'];	
+		
 		$this->assign('task_id', $task_id);
 		$this->assign('BaseUrl', $BaseUrl);
 		return $this->fetch('timer/RunOneCmdScript');
