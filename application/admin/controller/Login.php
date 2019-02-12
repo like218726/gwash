@@ -31,11 +31,11 @@ class Login extends Base {
 	 */
     public function login() {
     	if ($this->request->isPost()) {
-    	    $pass = md5(input('post.password/s'));
-	        $user = input('post.username/s');
+    	    $pass = md5(input('post.password','','trim'));
+	        $user = input('post.username','','trim');
 	
-	        $challenge = input('post.geetest_challenge');
-	        $validate = input('post.geetest_validate');
+	        $challenge = input('post.geetest_challenge','','trim');
+	        $validate = input('post.geetest_validate','','trim');
 	        if(!$challenge || md5($challenge) != $validate){
 	            return $this->ajaxError('请先通过验证！');
 	        }
@@ -48,6 +48,8 @@ class Login extends Base {
 	                //保存用户信息和登录凭证
 	                cache($userInfo['id'], session_id(), config('ONLINE_TIME'));
 	                session('uid', $userInfo['id']);
+	                session('nick_name', $userInfo['nickname']);
+	                session('real_name', $userInfo['realname']);
 	
 	                //更新用户数据
 	                $userData = model('SystemAdminUserData')->where(array('uid' => $userInfo['id']))->find();
@@ -111,6 +113,9 @@ class Login extends Base {
             if (!empty($data['nickname'])) {
                 $newData['nickname'] = $data['nickname'];
             }
+        	if (!empty($data['realname'])) {
+                $newData['realname'] = $data['realname'];
+            }
             if (!empty($data['password'])) {
                 $newData['password'] = md5($data['password']);
                 $newData['updateTime'] = time();
@@ -123,15 +128,15 @@ class Login extends Base {
                 return $this->ajaxSuccess('修改成功');
             }
         } else { 
-            $userInfo = model('SystemAdminUser')->where(array('id' => session('uid')))->find();
-            return $this->fetch("changeUser",["uname"=>$userInfo['username']]);
+            $userInfo = model('SystemAdminUser')->where(array('id' => session('uid')))->find()->toArray(); 
+            return $this->fetch("changeUser",["uname"=>$userInfo['username'], "userinfo"=>$userInfo]);
         }    	
     } 
 
     /**
+     * 
      * 权限提示页
-     * @author wzj
-     * 2018/4/16
+     * 
      */
     public function ruleTip(){
     	if ($this->request->isGet()) {

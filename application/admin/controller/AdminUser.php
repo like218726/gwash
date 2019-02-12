@@ -14,7 +14,7 @@ class AdminUser extends Base {
     	if ($this->request->isGet()) {
     		$this->assign('username','');
 	    	$this->assign('status','');
-	    	$this->assign('status_arr',[''=>'请选择','0'=>'禁用','1'=>'启用']);
+	    	$this->assign('status_arr',array(''=>'请选择','0'=>'禁用','1'=>'启用'));
 	        return $this->fetch();
     	}
     }	
@@ -26,19 +26,19 @@ class AdminUser extends Base {
      */
 	public function ajaxGetIndex() {
 		if ($this->request->isGet()) {
-			$where = [];
-//			$where['a.id'] = ['not in',['1','2']];
-			$start = trim(input('get.start/d'));
-			$lenght = trim(input('get.length/d'));
+			$where = array();
+			$start =  input('get.start','0','trim');   
+			$lenght = input('get.length','0','trim');
+			$draw = input('get.draw','0','trim');
 			$start = $start ? $start : 0;
 			$limit = $lenght ? $lenght : 20;
-			$draw = trim(input('get.draw/d')) ? trim(input('get.draw/d')) : 0;
+			$draw = $draw ? $draw : 0;
 
-			$username = trim(input('username/s'));
-			$status = trim(input('status'));
+			$username = input('get.username','','trim');
+			$status = input('get.status','','trim');
 		
 			if ($username != '') {
-				$where['username'] = ['like','%'.$username.'%'];
+				$where['username'] = array('like','%'.$username.'%');
 			}
 			
 			if ($status != '') {
@@ -78,7 +78,7 @@ class AdminUser extends Base {
 	            'data'            => $listInfo,
 	        );
 	        $this->assign('username',$username);
-	        $this->assign('status_arr',[''=>'请选择','0'=>'禁用','1'=>'启用']);
+	        $this->assign('status_arr',array(''=>'请选择','0'=>'禁用','1'=>'启用'));
 	        $this->assign('status',$status);
 	        $this->ajaxReturn($data, 'json');			
 		}	
@@ -128,11 +128,11 @@ class AdminUser extends Base {
 	        if ($isAdmin) {
 	            return $this->ajaxError('超级管理员不可以被操作');
 	        }
-	        $result = Db::name('system_admin_user')->where(['id'=>$id])->find();
+	        $result = Db::name('system_admin_user')->where('id', $id)->find();
 	        if (!$result) {
 	        	return $this->ajaxError('参数非法');
 	        }
-	        $res = Db::name('system_admin_user')->where(array('id' => $id))->update(array('status' => 0));
+	        $res = Db::name('system_admin_user')->where('id', $id)->update(array('status' => 0));
 	        if ($res === false) {
 	        	return $this->ajaxError('操作失败');
 	        } else {

@@ -12,10 +12,10 @@
                     </div>
                 </div>				
 
-                <div class="layui-inline">
+                <div class="layui-inline layui-form-item"">
                     <label class="layui-form-label label-width">状态：</label>
                     <div class="layui-input-inline">
-                    	<select name="status">						
+                    	<select name="status" lay-filter="status">						
 							{foreach $status_arr as $key=>$value}
 								{if $status eq ''}
 								<option value="{$key}">{$value}</option>
@@ -29,6 +29,7 @@
 				
                 <div class="layui-inline">
                     <span class="layui-btn sub">查询</span>
+                    <span class="layui-btn resetform layui-btn-primary">重置</span>
                 </div>
             </div>
             </form>
@@ -54,8 +55,11 @@
 </block>
 <block name="myScript">
     <script>
-    	
-		/**
+    	$(".resetform").click(function(){
+	    	$('#form-admin-add')[0].reset();
+    	})
+	    
+	    /**
 		 * 
 		 * @param {Object} obj
 		 * 

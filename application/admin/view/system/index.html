@@ -22,7 +22,7 @@
                 <div class="layui-form-item">
                     <label class="layui-form-label"><span style="color:red">*</span> 网站地址</label>
                     <div class="layui-input-block">
-                        <input type="text" name="site_url" required value="{$config['site_url'] ? $config['site_url']: ''}" lay-verify="required" placeholder="网站地址" class="layui-input">
+                        <input type="text" name="site_url" required value="{$config['site_url'] ? $config['site_url']: ''}" lay-verify="required|url" placeholder="网站地址" class="layui-input">
                     </div>
                 </div>
                 <div class="layui-form-item">

@@ -32,6 +32,7 @@ class Index extends Base {
 	            }
 	        }
 	        $list = formatTree($list);
+	        $this->assign('real_name',session('real_name'));
 	        return $this->fetch("index/index",["list"=>$list]);    		
     	}
     }
@@ -140,11 +141,28 @@ class Index extends Base {
      * 
      */
     public function version() {
-    	if ($this->request->isGet()) {  
+    	if ($this->request->isGet()) {   
+    		$app_version = config('APP_VERSION');
+    		$app_version_arr = explode('.', substr($app_version, 1)); 
+    		if ($app_version_arr['0'] != 0 && $app_version_arr['1'] == 0 && $app_version_arr['2'] == 0) { 
+    			$version_num = $app_version_arr['0'].'00';
+    		} elseif ($app_version_arr['0'] != 0 && $app_version_arr['1'] == 0 && $app_version_arr['2'] != 0) { 
+    			$version_num = $app_version_arr['0'].'00' + $app_version_arr['2'];
+    		} elseif($app_version_arr['0'] != 0 && $app_version_arr['1'] != 0) { 
+    			$version_num = $app_version_arr['0'].'00' + ($app_version_arr['1'].$app_version_arr['2']);
+    		} elseif ($app_version_arr['0'] == 0 && $app_version_arr['1'] == 0 && $app_version_arr['2'] != 0) {
+    			$version_num = $app_version_arr['2'];
+    		} elseif ($app_version_arr['0'] == 0 && $app_version_arr['1'] > 0) { 
+    			$version_num = $app_version_arr['1'].$app_version_arr['2'];
+    		} elseif ($app_version_arr['0'] == 0 && $app_version_arr['1'] == 0) { 
+    			$version_num = $app_version_arr['2'] + 1;
+    		} else { 
+    			$version_num = 0;
+    		}
     		$version['0'] = ['name'=>'当前系统','value'=>config('APP_NAME').'管理系统'];
-    		$version['1'] = ['name'=>'版本号','value'=>config('APP_VERSION')];
-    		$version['2'] = ['name'=>'发布次数','value'=>config('VERSION_NUM')];
-    		$version['3'] = ['name'=>'版本信息','value'=>substr(config('APP_VERSION'), 1)];
+    		$version['1'] = ['name'=>'版本号','value'=>$app_version];
+    		$version['2'] = ['name'=>'发布次数','value'=>$version_num];
+    		$version['3'] = ['name'=>'版本信息','value'=>substr($app_version, 1)];
     		$version['4'] = ['name'=>'发布者','value'=>config('COMPANY_NAME')];
     		$version['5'] = ['name'=>'发布时间','value'=>config('VERSION_TIME')];    		
     		Cache::set('version', $version);

@@ -28,9 +28,10 @@
                         进入前台
                     </a>
                 </li>
+                <li class="layui-nav-item"><a href="{:url('system/clear')}" id="clear-cache">清除缓存</a></li>
                 <li class="layui-nav-item">
                     <a href="javascript:;">
-                        管理员
+                        {:session('nick_name')}{$real_name ? '['.$real_name.']' : ''}
                     </a>
                     <dl class="layui-nav-child">
                         <dd class="api-add">

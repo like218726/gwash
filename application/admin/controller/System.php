@@ -39,4 +39,18 @@ class System extends Base
         return $this->ajaxSuccess('保存成功');
     }
 
+    /**
+     * 
+     * 清空缓存
+     * 
+     */
+    public function clear()
+    {
+        if (delete_dir_file(CACHE_PATH) && delete_dir_file(TEMP_PATH)
+        	&& delete_dir_file(LOG_PATH )) {
+            $this->success('清除缓存成功');
+        } else {
+            $this->error('清除缓存失败');
+        }  	
+    }
 }
