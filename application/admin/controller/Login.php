@@ -116,6 +116,9 @@ class Login extends Base {
         	if (!empty($data['realname'])) {
                 $newData['realname'] = $data['realname'];
             }
+        	if (!empty($data['mobile'])) {
+                $newData['mobile'] = $data['mobile'];
+            }
             if (!empty($data['password'])) {
                 $newData['password'] = md5($data['password']);
                 $newData['updateTime'] = time();
