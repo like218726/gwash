@@ -28,11 +28,11 @@ class Log extends Base {
      * 
      */
     public function ajaxGetIndex() {
-    	if ($this->request->isPost()) {
+    	if ($this->request->isGet()) {
 	        $postData = input();
-	        $start = $postData['start'] ? $postData['start'] : 0;
-	        $limit = $postData['length'] ? $postData['length'] : 20;
-	        $draw = $postData['draw'];
+			$start = input('get.start','0','trim') ? input('get.start','0','trim') : 0;   
+			$limit = input('get.length','0','trim') ? input('get.length','0','trim') : 20;
+			$draw = input('get.draw','0','trim') ? input('get.draw','0','trim') : 0;
 	        $where = array();
 	        if (isset($postData['type']) && !empty($postData['type'])) {
 	            if (isset($postData['keyword']) && !empty($postData['keyword'])) {
@@ -68,12 +68,12 @@ class Log extends Base {
      */
     public function del() {
     	if ($this->request->isPost()) {
-    		$id = trim(input('post.id/d'));
-    		$result = Db::name('system_admin_user_action')->where(['id'=>$id])->count();
+    		$id = input('post.id','0','trim');
+    		$result = Db::name('system_admin_user_action')->where('id', $id)->count();
     		if (!$result) {
     			return $this->ajaxError('参数非法');
     		}
-	    	$res = Db::name('system_admin_user_action')->where(array('id' => $id))->delete();
+	    	$res = Db::name('system_admin_user_action')->where('id', $id)->delete();
 	        if ($res === false) {
 	            return $this->ajaxError('操作失败');
 	        } else {
@@ -89,8 +89,8 @@ class Log extends Base {
      */
     public function showDetail() {
         if ($this->request->isGet()) { 
-        	$id = trim(input('get.id/d')); 
-            $listInfo = Db::name('system_admin_user_action')->where(array('id' => $id))->find();
+        	$id = input('get.id','0','trim'); 
+            $listInfo = Db::name('system_admin_user_action')->where('id', $id)->find();
             $this->assign('detail', $listInfo);
             return $this->fetch('showDetail');
         }

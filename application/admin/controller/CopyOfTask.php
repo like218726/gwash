@@ -28,7 +28,6 @@ class Task extends Base{
 			$list = $model->tasklist($this->getParams());
 			exit(json_encode($list));
 		}
-
 		$this->assign('module', $model->moduleType());
 		$this->assign('shopHtml', $this->shopSelect(), 2);
 		$this->assign('base_path', BASE_PATH);
@@ -38,7 +37,6 @@ class Task extends Base{
 	}
 	
 	
-
 	public function getShop($code)
 	{
 		if(!$code)
@@ -340,12 +338,10 @@ class Task extends Base{
 		}else{
 			$real_path = PHP_BINDIR.'/php';
 		}
-
 		if(strpos($real_path, 'ephp.exe') !== FALSE)
 		{
 			$real_path = str_replace('ephp.exe', 'php.exe',$real_path);
 		}
-
 		return $real_path;
 	}
 	
@@ -385,7 +381,6 @@ class Task extends Base{
 			$this->showMessage(1, 1);
 		}
 	}
-
 	/**
 	 * 获取一行记录
 	 * Enter description here ...

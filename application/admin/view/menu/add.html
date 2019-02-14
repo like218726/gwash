@@ -3,7 +3,7 @@
     <fieldset class="layui-elem-field">
         <legend>菜单管理 - {$detail['id'] ? '编辑' : '新增'}菜单</legend>
         <div class="layui-field-box">
-            <form class="layui-form" action="">
+            <form class="layui-form" id="layui-form" action="">
                 {if condition="isset($detail['id'])"}
                     <input type="hidden" name="id" value="{$detail['id']}">
                 {/if}
@@ -18,8 +18,16 @@
                     <div class="layui-input-block">
                         <select name="fid" lay-verify="">
                             <option value="0">顶级菜单</option>
-                            {volist name="options" id="vo"}
-                                <option value="{$key}" >{$vo}</option>
+                            {volist name="options" id="vo" key="key"}
+								{if condition="isset($detail['id'])"}
+									{eq name="vo.id" value="$detail['fid'] ? $detail['fid'] : ''"}
+	                                	<option value="{$vo.id}" selected>{$vo.name}</option>
+									{else/}
+										<option value="{$vo.id}">{$vo.name}</option>
+									{/eq}
+								{else /}
+									<option value="{$vo.id}">{$vo.name}</option>
+								{/if}
                             {/volist}
                         </select>
                     </div>
@@ -45,7 +53,7 @@
                 <div class="layui-form-item">
                     <div class="layui-input-block">
                         <button class="layui-btn" lay-submit lay-filter="admin-form">立即提交</button>
-                        <button type="reset" class="layui-btn layui-btn-primary">重置</button>
+                        <button type="reset" class="layui-btn resetform layui-btn-primary">重置</button>
                     </div>
                 </div>
             </form>
@@ -53,6 +61,11 @@
     </fieldset>
 </block>
 <block name="myScript">
+	<script>
+   	$(".resetform").click(function(){
+    	$('#layui-form')[0].reset();
+   	})		
+	</script>	
     {if condition="isset($detail['id'])"}
         <script>
             layui.use('form', function(){

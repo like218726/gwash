@@ -27,12 +27,9 @@ class AdminUser extends Base {
 	public function ajaxGetIndex() {
 		if ($this->request->isGet()) {
 			$where = array();
-			$start =  input('get.start','0','trim');   
-			$lenght = input('get.length','0','trim');
-			$draw = input('get.draw','0','trim');
-			$start = $start ? $start : 0;
-			$limit = $lenght ? $lenght : 20;
-			$draw = $draw ? $draw : 0;
+			$start =  input('get.start','0','trim') ? input('get.start','0','trim') : 0;   
+			$limit = input('get.length','0','trim') ? input('get.length','0','trim') : 20;
+			$draw = input('get.draw','0','trim') ? input('get.draw','0','trim') : 0;
 
 			$username = input('get.username','','trim');
 			$status = input('get.status','','trim');
@@ -95,6 +92,7 @@ class AdminUser extends Base {
             $data = $this->request->post();
             $data['nickname'] = input('post.nickname','','trim');
             $data['username'] = input('post.username','','trim');   
+            $data['mobile'] = input('post.mobile','','trim');  
             $has = Db::name('system_admin_user')->where(array('username' => $data['username']))->count(); 
             if ($has) {
                 return $this->ajaxError('用户名已经存在，请重设！');
@@ -105,9 +103,9 @@ class AdminUser extends Base {
             $data['regTime'] = time(); 
             $res = Db::name('system_admin_user')->insertGetId($data);
             if ($res === false) {
-            	return $this->ajaxError('添加失败');
+            	return $this->ajaxError('操作失败');
             } else {
-            	return $this->ajaxSuccess('添加成功');
+            	return $this->ajaxSuccess('操作成功');
             }
         } else {
             return $this->fetch();
@@ -123,7 +121,7 @@ class AdminUser extends Base {
      */
     public function close() {
     	if ($this->request->isPost()) {
-	        $id = trim(input('post.id/d'));
+	        $id = input('post.id','0','trim');
 	        $isAdmin = isAdministrator($id);
 	        if ($isAdmin) {
 	            return $this->ajaxError('超级管理员不可以被操作');
@@ -148,16 +146,16 @@ class AdminUser extends Base {
      */
     public function open() {
     	if ($this->request->isPost()) {
-	        $id = trim(input('post.id/d'));
+	        $id = input('post.id','0','trim');
 	        $isAdmin = isAdministrator($id);
 	        if ($isAdmin) {
 	            return $this->ajaxError('超级管理员不可以被操作');
 	        }
-    		$result = Db::name('system_admin_user')->where(['id'=>$id])->find();
+    		$result = Db::name('system_admin_user')->where('id', $id)->find();
 	        if (!$result) {
 	        	return $this->ajaxError('参数非法');
 	        }	        
-	        $res = Db::name('system_admin_user')->where(array('id' => $id))->update(array('status' => 1));
+	        $res = Db::name('system_admin_user')->where('id', $id)->update(array('status' => 1));
 	        if ($res === false) {
 	        	return $this->ajaxError('操作失败');
 	        } else {
@@ -173,12 +171,12 @@ class AdminUser extends Base {
      */
     public function del() {
     	if ($this->request->isPost()) {
-    	    $id = trim(input('post.id/d'));
+    	    $id = input('post.id','0','trim');
 	        $isAdmin = isAdministrator($id);
 	        if ($isAdmin) {
 	            return $this->ajaxError('超级管理员不可以被操作');
 	        }
-    		$result = Db::name('system_admin_user')->where(['id'=>$id])->find();
+    		$result = Db::name('system_admin_user')->where('id', $id)->find();
 	        if (!$result) {
 	        	return $this->ajaxError('参数非法');
 	        }
@@ -189,8 +187,8 @@ class AdminUser extends Base {
 	        if ($res === false) {
 	            return $this->ajaxError('操作失败');
 	        } else {
-	        	Db::name('system_admin_user_action')->where(array('id',$id))->delete();
-	        	Db::name('system_admin_user_data')->where(array('id',$id))->delete();	        	
+	        	Db::name('system_admin_user_action')->where('id', $id)->delete();
+	        	Db::name('system_admin_user_data')->where('id', $id)->delete();	        	
 	            return $this->ajaxSuccess('操作成功');
 	        }    		
     	}

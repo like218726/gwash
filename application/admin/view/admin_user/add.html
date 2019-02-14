@@ -20,6 +20,12 @@
                     </div>
                 </div>
                 <div class="layui-form-item">
+                    <label class="layui-form-label"><span style="color:red">*</span> 手机号码</label>
+                    <div class="layui-input-block">
+                        <input type="text" name="mobile" required value="{$detail['mobile'] ? $detail['mobile'] : ''}" lay-verify="required" placeholder="请输入手机号" class="layui-input">
+                    </div>
+                </div>				
+                <div class="layui-form-item">
                     <label class="layui-form-label"><span style="color:red">*</span> 用户密码</label>
                     <!--<div class="layui-input-inline">
                         <input type="password" name="password" required lay-verify="required" value="{$detail['password'] ? '' : '123456'}" placeholder="请输入密码" class="layui-input">
@@ -39,9 +45,11 @@
     </fieldset>
 </block>
 <block name="myScript">
+	<script>
    	$(".resetform").click(function(){
     	$('#layui-form')[0].reset();
-   	})	
+   	})		
+	</script>
     {if condition="isset($detail['id'])"}
         <script>
             layui.use('form', function(){

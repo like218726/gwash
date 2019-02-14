@@ -35,15 +35,13 @@ class ConfigDict extends Base
      */
     public function ajaxgetindex() {
     	if ($this->request->isGet()) {
-			$where = [];
-			$start = trim(input('post.start/d'));
-			$lenght = trim(input('post.length/d'));
-			$start = $start ? $start : 0;
-			$limit = $lenght ? $lenght : 20;
-			$draw = trim(input('post.draw')) ? trim(input('post.draw')) : 0;
+			$where = array();
+			$start = input('get.start', '0', 'trim') ? input('get.start', '0', 'trim') : 0;
+			$limit = input('get.length', '0', 'trim') ? input('get.length', '0', 'trim') : 20;
+			$draw = input('get.draw', '0', 'trim') ? input('get.draw', '0', 'trim') : 0;
 
-			$name = trim(input('name/s'));
-			$status = trim(input('status'));
+			$name = input('get.name', '', 'trim');
+			$status = input('get.status', '', 'trim');
 
 			if ($name != '') {
 				$where['name'] = ['like','%'.$name.'%'];
@@ -117,9 +115,9 @@ class ConfigDict extends Base
     public function edit()
     {
         if( $this->request->isGet() ) {
-            $id = trim(input('get.id/d'));
+            $id = input('get.id', '0', 'trim');
             if( $id ){
-                $detail = Db::name('system_config_dict')->where(array('id' => $id))->find();
+                $detail = Db::name('system_config_dict')->where('id', $id)->find();
                 $this->assign('detail', $detail);
                 return $this->fetch('config_dict/add');
             }else{
@@ -127,9 +125,9 @@ class ConfigDict extends Base
             }
         } else if($this->request->isPost()){
             $data = $this->request->post();
-            $data['id'] = trim($data['post.id/d']);
+            $data['id'] = input($data['id'], 0 , 'trim'); 
             $data['update_time'] = time();
-            $res = Db::name('system_config_dict')->where(array('id' => $data['id']))->update($data);
+            $res = Db::name('system_config_dict')->where('id', $id)->update($data);
             if( $res === false ) {
                 return $this->ajaxError('操作失败');
             } else {
@@ -149,12 +147,12 @@ class ConfigDict extends Base
     public function del()
     {
     	if ($this->request->isPost()) {
-    		$id = trim(input('post.id/d'));
-    		$result = Db::name('system_config_dict')->where(['id'=>$id])->count();
+    		$id = input('post.id', 0 , 'trim');
+    		$result = Db::name('system_config_dict')->where('id', $id)->count();
     		if (!$result) {
     			return $this->ajaxError('参数非法');
     		}
-    		$res = Db::name('system_config_dict')->where(array('id' => $id))->delete();
+    		$res = Db::name('system_config_dict')->where('id', $id)->delete();
 	        if ($res === false) {
 	            return $this->ajaxError('操作失败');
 	        } else {
@@ -172,12 +170,12 @@ class ConfigDict extends Base
     public function close()
     {
     	if ($this->request->isPost()) {
-    		$id = trim(input('post.id/d'));
-    		$result = Db::name('system_config_dict')->where(['id'=>$id])->count();
+    		$id = input('post.id', 0 , 'trim');
+    		$result = Db::name('system_config_dict')->where('id', $id)->count();
     		if (!$result) {
     			return $this->ajaxError('参数非法');
     		}
-	    	$res = Db::name('system_config_dict')->where(array('id' => $id))->update(array('status' => 0));
+	    	$res = Db::name('system_config_dict')->where('id', $id)->update(array('status' => 0));
 	        if ($res === false) {
 	            return $this->ajaxError('操作失败');
 	        } else {
@@ -195,13 +193,13 @@ class ConfigDict extends Base
     public function open()
     {
     	if ($this->request->isPost()) {
-    		$id = trim(input('post.id/d'));
+    		$id = input('post.id', 0 , 'trim');
   
-    		$result = Db::name('system_config_dict')->where(['id'=>$id])->count();
+    		$result = Db::name('system_config_dict')->where('id', $id)->count();
     		if (!$result) {
     			return $this->ajaxError('参数非法');
     		}
-	    	$res = Db::name('system_config_dict')->where(array('id' => $id))->update(array('status' => 1));
+	    	$res = Db::name('system_config_dict')->where('id', $id)->update(array('status' => 1));
 	        if ($res === false) {
 	            return $this->ajaxError('操作失败');
 	        } else {

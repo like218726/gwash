@@ -3,7 +3,7 @@
     <fieldset class="layui-elem-field">
         <legend>系统配置 - {$detail['id']? '编辑' : '新增'}参数字典</legend>
         <div class="layui-field-box">
-            <form class="layui-form" action="" enctype="multipart/form-data">
+            <form class="layui-form" id="layui-form" action="" enctype="multipart/form-data">
                 {if condition="isset($detail['id'])"}
                     <input type="hidden" name="id" value="{$detail['id']}">
                 {/if}
@@ -62,7 +62,7 @@
                 <div class="layui-form-item">
                     <div class="layui-input-block">
                         <button class="layui-btn" lay-submit lay-filter="admin-form">立即提交</button>
-                        <button type="reset" class="layui-btn layui-btn-primary">重置</button>
+                        <button type="reset" class="layui-btn resetform layui-btn-primary">重置</button>
                     </div>
                 </div>
             </form>
@@ -70,7 +70,11 @@
     </fieldset>
 </block>
 <block name="myScript">
-
+	<script>
+   	$(".resetform").click(function(){
+    	$('#layui-form')[0].reset();
+   	})		
+	</script>
     {if condition="isset($detail['id'])"}
         <script>
 

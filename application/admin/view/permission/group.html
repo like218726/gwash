@@ -20,7 +20,7 @@
                 <div class="layui-form-item">
                     <div class="layui-input-block">
                         <button class="layui-btn" lay-submit lay-filter="admin-form">立即提交</button>
-                        <button type="reset" class="layui-btn layui-btn-primary">重置</button>
+                        <button type="reset" class="layui-btn resetform layui-btn-primary">重置</button>
                     </div>
                 </div>
             </form>
@@ -28,6 +28,11 @@
     </fieldset>
 </block>
 <block name="myScript">
+	<script>
+   	$(".resetform").click(function(){
+    	$('#layui-form')[0].reset();
+   	})		
+	</script>	
     <script>
         layui.use('form', function(){
             var form = layui.form();

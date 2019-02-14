@@ -43,16 +43,19 @@ class Task extends Base{
 	        $postData = input();  
 	        $start = $postData['start'] ? $postData['start'] : 0;
 	        $limit = $postData['length'] ? $postData['length'] : 20;
-	        $draw = $postData['draw'];
+	        $draw = $postData['draw'] ? $postData['draw'] : 20;
 	        $where = array();
-		    if (trim(input('type')) !='' ) {
-	        	$where['type'] = ['like','%'.trim(input('type')).'%'];
+	        $type = input('get.type', '' ,'trim');
+		    if ($type !='' ) {
+	        	$where['type'] = ['like','%'.$type.'%'];
 	        }
-			if (trim(input('task_name')) !='' ) {
-	        	$where['task_name'] = ['like','%'.trim(input('task_name')).'%'];
+	        $task_name = input('get.task_name', '' ,'trim');
+			if ($task_name !='' ) {
+	        	$where['task_name'] = ['like','%'.$task_name.'%'];
 	        }
-			if (trim(input('is_on')) !='' ) {
-	        	$where['is_on'] = ['like','%'.trim(input('is_on')).'%'];
+	        $is_on = input('get.is_on', '' ,'trim');
+			if ($is_on !='' ) {
+	        	$where['is_on'] = ['like','%'.$is_on.'%'];
 	        }		
 	        $total = Db::name('system_auto_task')->where($where)->count();
 	        $info = Db::name('system_auto_task')->where($where)->limit($start, $limit)->order('type,task_code,task_id desc')->select();

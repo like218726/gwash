@@ -81,8 +81,8 @@
 						<td>服务器CGI版本： </td>
 						<td>{$sys_info.server_software}</td>
 					</tr>
-            </table>
-			{eq name="os" value="WINNT"}{include file="index/windowsSysInfo" /}{else/}{include file="index/linuxSysInfo" /}{/eq}			
+            </table>			
+			{include file="index/windowsSysInfo" /}		
         </div>
     </fieldset>
 </block>

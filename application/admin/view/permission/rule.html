@@ -3,7 +3,7 @@
     <fieldset class="layui-elem-field">
         <legend>权限管理 - 权限组细节配置</legend>
         <div class="layui-field-box">
-            <form class="layui-form" action="">
+            <form class="layui-form" id="layui-form" action="">
                 <input type="hidden" name="groupId" value="{:input('id')}">
                 {volist name="list" id="vo"}
                     <div class="layui-form-item">
@@ -28,13 +28,18 @@
                 {/volist}
                 <div class="layui-form-item">
                     <button class="layui-btn" lay-submit lay-filter="admin-form">立即提交</button>
-                    <button type="reset" class="layui-btn layui-btn-primary">重置</button>
+                    <button type="reset" class="layui-btn resetform layui-btn-primary">重置</button>
                 </div>
             </form>
         </div>
     </fieldset>
 </block>
 <block name="myScript">
+	<script>
+   	$(".resetform").click(function(){
+    	$('#layui-form')[0].reset();
+   	})		
+	</script>		
     <script>
         layui.use('form', function(){
             var form = layui.form();

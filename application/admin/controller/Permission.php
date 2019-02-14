@@ -39,14 +39,12 @@ class Permission extends Base {
     public function ajaxGetIndex() {
 		if ($this->request->isGet()) {
 			$where = [];
-			$start = trim(input('start/d'));
-			$lenght = trim(input('length/d'));
-			$start = $start ? $start : 0;
-			$limit = $lenght ? $lenght : 20;
-			$draw = trim(input('draw')) ? trim(input('draw')) : 0;
-
-			$name = trim(input('post.name/s'));
-			$status = trim(input('post.status/d'));
+			$start = input('get.start', 0 ,'trim') ? input('get.start', 0 ,'trim') : 0;
+			$limit = input('get.length', 0, 'trim') ? input('get.length', 0, 'trim') : 20;
+			$draw = input('get.draw', 0, 'trim') ? input('get.draw', 0, 'trim') : 0;
+			
+			$name = input('post.name', '', 'tirm');
+			$status = input('post.status', '', 'trim');
 		
 			if ($name != '') {
 				$where['name'] = ['like','%'.$name.'%'];
@@ -94,8 +92,8 @@ class Permission extends Base {
      */
     public function add() {
         if ($this->request->isPost()) {
-        	$data['name'] = trim(input('post.name/s'));
-        	$data['description'] = trim(input('post.description/s')); 
+        	$data['name'] = input('post.name', '0', 'trim');
+        	$data['description'] = input('post.description', '0', 'trim'); 
         	$count = Db::name('system_auth_group')->where(['name'=>$data['name']])->count();
         	if ($count) {
         		return $this->ajaxError('权限组已存在');
@@ -118,7 +116,7 @@ class Permission extends Base {
      */
     public function close() {
     	if ($this->request->isPost()) {
-    		$id = trim(input('post.id/d'));
+    		$id = input('post.id', '0', 'trim');
     		$result = Db::name('system_auth_group')->where(['id'=>$id])->count();
     		if (!$result) {
     			return $this->ajaxError('参数非法');
@@ -139,7 +137,7 @@ class Permission extends Base {
      */
     public function open() {
     	if ($this->request->isPost()) {
-    		$id = trim(input('post.id/d'));
+    		$id = input('post.id', '0', 'trim');
     		$result = Db::name('system_auth_group')->where(['id'=>$id])->count();
     		if (!$result) {
     			return $this->ajaxError("参数非法");
@@ -160,14 +158,14 @@ class Permission extends Base {
      */
     public function edit() {
         if ($this->request->isGet()) {
-        	$id = trim(input('get.id/d'));
+        	$id = input('get.id', '0', 'trim');
             $detail = Db::name('system_auth_group')->where(array('id' => $id))->find();
             $this->assign('detail', $detail);
             return $this->fetch('add');
         } elseif ($this->request->isPost()) {
-        	$id = trim(input('post.id/d'));
-        	$data['name'] = trim(input('post.post.name/s'));
-        	$data['description'] = trim(input('post.description'));
+        	$id = input('post.id', '0', 'trim');
+        	$data['name'] = input('post.name', '0', 'trim');
+        	$data['description'] = input('post.description', '0', 'trim');
     	    $result = Db::name('system_auth_group')->where(['id'=>$id])->count();
     	    if (!$result) {
     	    	return $this->ajaxError('参数非法');   	    	
@@ -190,7 +188,7 @@ class Permission extends Base {
      */
     public function del() {
     	if ($this->request->isPost()) {
-    		$id = trim(input('id'));
+    		$id = input('post.id', '0', 'trim');
     	    $result = Db::name('system_auth_group')->where(['id'=>$id])->count();
     	    if (!$result) {
     	    	return $this->ajaxError('参数非法');   	    	
@@ -234,7 +232,7 @@ class Permission extends Base {
                 return $this->ajaxError('授权失败');
             }
         } elseif ($this->request->isGet()) {    
-			$uid = trim(input('id'));
+			$uid = input('get.id', '0', 'trim');
             $groupAccess = model('SystemAuthGroupAccess')->where(array('uid' => $uid))->find();
             $groupAccess = explode(',', $groupAccess['groupId']); 
             $allGroup = model('SystemAuthGroup')->select()->toArray();
@@ -252,7 +250,7 @@ class Permission extends Base {
      */
     public function member() {
     	if ($this->request->isGet()) {
-    		$groupId = trim(input('id/d'));
+    		$groupId = input('get.id', '0', 'trim');
             $uidArr = array();
             $allGroups = Db::name('system_auth_group_access')->select();  
             foreach ($allGroups as $allGroup) {
@@ -283,8 +281,8 @@ class Permission extends Base {
      */
     public function delMember() {
         if ($this->request->isPost()) {
-            $uid = trim(input('post.uid/d'));
-            $groupId = trim(input('post.groupId/d'));
+            $uid = input('post.uid', '0', 'trim');
+            $groupId = input('post.groupId', '0', 'trim');
             $oldInfo = Db::name('system_auth_group_access')->where(array('uid' => $uid))->find();
             $oldGroupArr = explode(',', $oldInfo['groupId']);
             $key = array_search($groupId, $oldGroupArr);
@@ -307,7 +305,7 @@ class Permission extends Base {
     public function rule() {
         if ($this->request->isPost()) {
         	$postData = input();
-            $groupId = trim(input('post.groupId/d')); 
+            $groupId = input('post.group', '0' ,'trim'); 
             if (!isset($postData['rule'])) {
             	return $this->error('权限不能为空');
             }
@@ -335,7 +333,7 @@ class Permission extends Base {
             }
             return $this->ajaxSuccess('操作成功');
         } elseif ($this->request->isGet()) {
-        	$groupId = trim(input('id/d'));
+        	$groupId = input('post.id', '0' ,'trim');
             $has = Db::name('system_auth_rule')->where(array('groupId' => $groupId))->select();
             $hasRule = array_column($has, 'url');
             $originList = Db::name('system_menu')->order('sort desc')->select();

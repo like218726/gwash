@@ -49,6 +49,7 @@
 				
                 <div class="layui-inline">
                     <span class="layui-btn sub">查询</span>
+					<span class="layui-btn resetform layui-btn-primary">重置</span>
                 </div>
             </div>
             </form>
@@ -76,6 +77,11 @@
     </fieldset>
 </block>
 <block name="myScript">
+	<script>
+   	$(".resetform").click(function(){
+    	$('#form-admin-add')[0].reset();
+   	})		
+	</script>	
     <script>
     	
 		/**
@@ -135,7 +141,7 @@
             });
 
             $(".api-add").click(function(){
-				layer.confirm('你确定要刷新命令吗?',function(){	
+				layer.confirm('你确定要刷新命令吗?', {title:'刷新命令'}, function(){	
 					$.post("{:url('RefreshCmd')}",function(data){
 						if (data.code == 200) {
 							location.reload();
@@ -151,7 +157,7 @@
             });
 
             $(".open").click(function(){
-				layer.confirm('你确定要开启吗?',function(){
+				layer.confirm('你确定要开启吗?', {title:'开启'}, function(){
 					var checkObj = $("input[name='task_id']:checked");
 					var ids=''
 					var num = checkObj.length; 
@@ -271,7 +277,7 @@
 		function copycmd(id) {
 			var str = $("#path_"+id).attr('data-text');
 			 copyText( str , function (){
-				layer.alert(str);
+				layer.alert(str, {title: '复制命令'});
 			})						
 		}	
 		
@@ -280,11 +286,11 @@
 		{
 			if(!pcode)
 			{
-				layer.alert('该记录不支持复制');
+				layer.alert('该记录不支持复制' , {title: '复制记录'});
 				return ;
 			}
 			
-			layer.confirm('确定要复制一条新的任务？',function(){
+			layer.confirm('确定要复制一条新的任务？', {title: '复制记录'}, function(){
 				var url = "{:url('copy')}";
 				$.post(url, {task_id : task_id}, function(data){
 					if (data.code == 200) {
@@ -304,7 +310,7 @@
 		/*执行命令*/
 		function runView(id) {
 			var cmd=$("#path2_"+id).attr('data-text');	
-			layer.confirm('确定要执行？', function(){
+			layer.confirm('确定要执行？', {title: '执行命令'} , function(){
 				var d = new Date();
 				var url = '{$BaseUrl}/auto_task/RunOneCommand/type/client/id/'+id+'/timestamp/'+d.getTime()+'?command_script='+encodeURIComponent(cmd);
 				var title = '任务执行';

@@ -1,0 +1,40 @@
+{include file="public/base" /}
+<block name="main">
+    <fieldset class="layui-elem-field">
+        <div class="layui-field-box">
+            <table class="layui-table" lay-even>
+            	<thead>
+            		<tr>
+            			<td colspan="6" align="center">{$welcome}</td>
+            		</tr>
+            	</thead>
+                <tbody>
+                    <tr>
+                        <td>网站域名：</td>
+                        <td>{$sys_info.url}</td>
+                        <td>网站目录：</td>
+                        <td>{$sys_info.document_root}</td>
+                        <td>操作系统：</td>
+                        <td>{$sys_info.server_os}</td>
+                    </tr>
+                    <tr>
+                        <td>服务器端口：</td>
+                        <td>{$sys_info.server_port}</td>
+                        <td>服务器环境：</td>
+                        <td>{$sys_info.server_soft}</td>
+                        <td>PHP版本</td>
+                        <td>{$sys_info.php_version}</td>
+                    </tr>
+                    <tr>
+                        <td>MySQL版本：</td>
+                        <td>{$sys_info.mysql_version}</td>
+                        <td>最大上传限制：</td>
+                        <td>{$sys_info.max_upload_size}</td>
+                        <td></td>
+                        <td></td>
+                    </tr>
+            </table>
+			{include file="index/linuxSysInfo" /}			
+        </div>
+    </fieldset>
+</block>

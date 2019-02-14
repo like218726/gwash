@@ -46,20 +46,23 @@ class Menu extends Base {
      */
     public function ajaxGetIndex() {
     	if ($this->request->isGet()) {
-	        $start = trim(input('post.start/d')) ? trim(input('post.start/d')): 0;
-	        $limit = trim(input('post.length/d')) ? trim(input('post.length/d')) : 20;
-	        $draw = trim(input('post.draw/d')); 
+	        $start = input('get.start', '0', 'trim') ? input('get.start', '0', 'trim') : 0;
+	        $limit = input('get.length', '0', 'trim') ? input('get.length', '0', 'trim') : 20;
+	        $draw = input('get.draw', '0', 'trim') ? input('get.draw', '0', 'trim') : 0; 
 	        $where = array();
-	        if (trim(input('name')) !='' ) {
-	        	$where['name'] = ['like','%'.trim(input('name')).'%'];
+	        $name = input('get.name', '', 'trim');
+	        $status = input('get.status', '', 'trim');
+	        if ($name !='' ) {
+	        	$where['name'] = ['like','%'.$name.'%'];
 	        }
 
 	        if (trim(input('status')) !='' ) {
-	        	$where['status'] = trim(input('status'));
+	        	$where['status'] = $status;
 	        }
 	        
 	        $total = model('SystemMenu')->where($where)->count();
 	        $info = model('SystemMenu')->where($where)->limit($start, $limit)->select()->toArray();  
+	        
 	        foreach ($info as $k=>$list) { 
 	       		$info[$k]['status'] = $list['status'] ? '隐藏' : '显示'; 	
 	        	$menu_info = model('SystemMenu')->getMenuInfoById($list['fid'],$this->status_arr); 
@@ -80,8 +83,8 @@ class Menu extends Base {
 	            'data'            => $info
 	        );
 	        $this->assign('status_arr',$this->status_arr);
-    		$this->assign('status',trim(input('post.status')));
-    		$this->assign('name',trim(input('post.name')));
+    		$this->assign('status',$status);
+    		$this->assign('name',$name);
 	        $this->ajaxReturn($data, 'json');    		
     	}
     }
@@ -107,12 +110,11 @@ class Menu extends Base {
         } else {
             $originList = model('SystemMenu')->where(['level'=>['in',['0','1']]])->order('sort asc')->select()->toArray();
             $fid = '';
-            $id = trim(input('id/d'));
+            $id = input('id', '0', 'trim');
             if (!empty($id)) {
                 $fid = $id;
             } 
-            $options = array_column(formatTree(listToTree($originList)), 'showName', 'id');
-            $this->assign('options', $options);
+            $this->assign('options', $originList);
             $this->assign('fid', $fid);
             return $this->fetch();
         }
@@ -126,7 +128,7 @@ class Menu extends Base {
      */
     public function open() {
     	if ($this->request->isPost()) {
-    		$id = trim(input('post.id/d'));
+    		$id = input('post.id', '0', 'trim');
     		$result = Db::name('system_menu')->where(['id'=>$id])->count();
     		if (!$result) {
     			return $this->ajaxError('参数非法');
@@ -148,7 +150,7 @@ class Menu extends Base {
      */
     public function close() {
     	if ($this->request->isPost()) {
-    		$id = trim(input('post.id/d'));
+    		$id = input('post.id', '0', 'trim');
     		$result = Db::name('system_menu')->where(['id'=>$id])->count();
     		if (!$result) {
     			return $this->ajaxError('参数非法');
@@ -171,13 +173,11 @@ class Menu extends Base {
      */
     public function edit() {
         if ($this->request->isGet()) {  
-        	$id = trim(input('get.id/d')); 
+        	$id = input('get.id', '0', 'trim'); 
         	$originList = model('SystemMenu')->where(['level'=>['in',['0','1']]])->order('sort asc')->select()->toArray();
-        	$options = array_column(formatTree(listToTree($originList)), 'showName', 'id');
-            $this->assign('options', $options);
-        	$listInfo = model('SystemMenu')->where(['id'=>$id])->find();
-            $this->assign('detail', $listInfo);
-            $this->assign('options', $options);
+        	$listInfo = model('SystemMenu')->where(['id'=>$id])->find()->toArray();        	
+            $this->assign('detail', $listInfo); 
+            $this->assign('options', $originList);
             return $this->fetch("add");
         } elseif ($this->request->isPost()) {
             $postData = $this->request->post();
@@ -200,7 +200,7 @@ class Menu extends Base {
      */
     public function del() {
     	if ($this->request->isPost()) {
-    		$id = trim(input('post.id/d'));
+    		$id = input('post.id', '0', 'trim');
     		$result = Db::name('system_menu')->where(['id'=>$id])->count();
     		if (!$result) {
     			return $this->ajaxError('参数非法');

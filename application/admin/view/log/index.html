@@ -20,6 +20,7 @@
                 </div>
                 <div class="layui-inline">
                     <span class="layui-btn sub">查询</span>
+					<span class="layui-btn resetform layui-btn-primary">重置</span>
                 </div>
             </div>
             </form>
@@ -40,7 +41,10 @@
 </block>
 <block name="myScript">
     <script>
-    	
+       	$(".resetform").click(function(){
+	    	$('#form-admin-add')[0].reset();
+    	})
+		  	
 		/**
 		 * 
 		 * @param {Object} obj
@@ -76,6 +80,7 @@
             $(document).on('click', '.confirm', function () {
                 var ownObj = $(this);
                 layer.confirm(ownObj.attr('data-info'), {
+					title: ownObj.attr('data-title'),
                     btn: ['确定','取消'] //按钮
                 }, function(){
                     $.ajax({
@@ -100,6 +105,7 @@
             $(document).on('click', '.edit', function () {
                 var ownObj = $(this);
                 layer.open({
+					title: '详情',
                     type: 2,
                     area: ['80%', '80%'],
                     maxmin: true,
@@ -144,7 +150,7 @@
                                 returnStr += '<span class="layui-btn edit layui-btn-normal" ' +
                                     'data-id="' + row.id +'" data-url="{:url(\"showDetail\","?id='+row.id+'")}">查看</span>';
                                 returnStr += '<span class="layui-btn layui-btn-danger confirm" ' +
-                                    'data-id="' + row.id +'" data-info="你确定删除当前日志么？" data-url="{:url(\'del\')}">删除</span>';
+                                    'data-id="' + row.id +'" data-title="删除" data-info="你确定删除当前日志么？" data-url="{:url(\'del\')}">删除</span>';
                                 return returnStr;
                             }
                         }
