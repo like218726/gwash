@@ -12,7 +12,7 @@ class AdminUser extends Base {
 	 */
     public function index() {
     	if ($this->request->isGet()) {
-    		$this->assign('username','');
+    		$this->assign('nickname','');
 	    	$this->assign('status','');
 	    	$this->assign('status_arr',array(''=>'请选择','0'=>'禁用','1'=>'启用'));
 	        return $this->fetch();
@@ -31,11 +31,11 @@ class AdminUser extends Base {
 			$limit = input('get.length','0','trim') ? input('get.length','0','trim') : 20;
 			$draw = input('get.draw','0','trim') ? input('get.draw','0','trim') : 0;
 
-			$username = input('get.username','','trim');
+			$nickname = input('get.nickname','','trim');
 			$status = input('get.status','','trim');
 		
-			if ($username != '') {
-				$where['username'] = array('like','%'.$username.'%');
+			if ($nickname != '') {
+				$where['nickname'] = array('like','%'.$nickname.'%');
 			}
 			
 			if ($status != '') {
@@ -74,7 +74,7 @@ class AdminUser extends Base {
 	            'recordsFiltered' => $total,
 	            'data'            => $listInfo,
 	        );
-	        $this->assign('username',$username);
+	        $this->assign('username',$nickname);
 	        $this->assign('status_arr',array(''=>'请选择','0'=>'禁用','1'=>'启用'));
 	        $this->assign('status',$status);
 	        $this->ajaxReturn($data, 'json');			
