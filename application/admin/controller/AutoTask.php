@@ -1,12 +1,4 @@
 <?php
-/**
- * 主定时器类
- * Enter description here ...
- * @author lyw
- * 主定时器： /usr/local/php/bin/php /var/www/html/family/index.php AutoTask Run
- *
- */
-
 namespace app\admin\controller;
 
 use think\Loader;

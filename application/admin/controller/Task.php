@@ -1,9 +1,4 @@
 <?php
-/**
- * 
- * 系统任务控制类
- *
- */
 namespace app\admin\controller;
 
 use think\Db;

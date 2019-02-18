@@ -1,8 +1,4 @@
 <?php
-/**
- * 任务数据类
- *
- */
 namespace app\admin\model;
 use think\Db;
 

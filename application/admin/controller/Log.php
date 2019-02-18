@@ -1,9 +1,4 @@
 <?php
-/**
- * @since   2017-04-13
- * @author  zhaoxiang <zhaoxiang051405@gmail.com>
- */
-
 namespace app\admin\controller;
 
 

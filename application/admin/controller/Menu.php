@@ -1,11 +1,4 @@
 <?php
-/**
- * Created by zendstudio.
- * User: licg
- * Date: 2018/11/06
- * Time: 16:21
- */
-
 namespace app\admin\controller;
 /**
  * 菜单管理控制器
