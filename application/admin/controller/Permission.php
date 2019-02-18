@@ -217,7 +217,7 @@ class Permission extends Base {
             $groupAccess = implode(',', $groupAccess);
             $oldArr = model('SystemAuthGroupAccess')->where(array('uid' => $data['uid']))->find();
             if ($oldArr) {
-            	$group = model('SystemAuthGroup')->where(['id'=>$oldArr['groupId']])->find();
+            	$group = model('SystemAuthGroup')->where(['id'=>$groupAccess])->find();
             	if ($group['status'] == 0) {
             		return $this->ajaxError('你所属权限组已禁用');
             	}

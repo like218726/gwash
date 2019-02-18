@@ -240,7 +240,7 @@ return [
         'list_rows' => 15,
     ],
     
-    'APP_VERSION' => 'v2.0.2',
+    'APP_VERSION' => 'v2.0.3',
     'VERSION_TIME' => '2019-02-18',
     'APP_NAME'    => 'Gwash智能洗眼镜',
 	'COMPANY_NAME' => '深圳市吉图软件开发有限公司',
