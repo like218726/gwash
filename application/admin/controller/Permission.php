@@ -24,7 +24,7 @@ class Permission extends Base {
 			$listInfo = Db::name('system_auth_group')->select();
 	        $this->assign('list', $listInfo);
 	        $this->assign('name','');
-	        $this->assign('status_arr',[''=>'请选择','0'=>'禁用','1'=>'正常']);
+	        $this->assign('status_arr',[''=>'请选择','0'=>'禁用','1'=>'启用']);
 	        $this->assign('status','');
 	        return $this->fetch();    		
     	}
@@ -64,7 +64,7 @@ class Permission extends Base {
 
 	        if ($listInfo) {
 	        	foreach ($listInfo as $key=>$value) {       		
-	                $listInfo[$key]['status'] = $value['status']== 1 ? '正常' : '禁用';
+	                $listInfo[$key]['status'] = $value['status']== 1 ? '启用' : '禁用';
 	        	}
 	        } else {
 	        	$listInfo = '';
@@ -77,7 +77,7 @@ class Permission extends Base {
 	            'data'            => $listInfo,
 	        );
 	        $this->assign('name',$name);
-	        $this->assign('status_arr',[''=>'请选择','0'=>'禁用','1'=>'正常']);
+	        $this->assign('status_arr',[''=>'请选择','0'=>'禁用','1'=>'启用']);
 	        $this->assign('status',$status);
 	        $this->ajaxReturn($data, 'json');				
 		}  	
