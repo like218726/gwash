@@ -259,4 +259,5 @@ return [
     ],
     'AUTH_CONFIG' => [],
     'COPYRIGHT' => 'Copyright © 2014-year company. All rights reserved. ',
+    'daterangepicker_days' => 3650,
 ];
