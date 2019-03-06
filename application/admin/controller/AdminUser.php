@@ -42,13 +42,17 @@ class AdminUser extends Base {
 				$where['a.status'] = $status;
 			}
 		
-			$total = Db::table('gwash_system_admin_user')->alias('a')->field('a.id,a.username,a.nickname,a.status,a.login_count,a.last_login,a.last_ip,a.last_city,c.name')
+			$total = model('SystemAdminUser')
+					->alias('a')
+					->field('a.id,a.username,a.nickname,a.status,a.login_count,a.last_login,a.last_ip,a.last_city,c.name')
                     ->join('gwash_system_auth_group_access b','a.id = b.uid','left')
                     ->join('gwash_system_auth_group c','b.groupId = c.id','left')
                     ->where($where)
                     ->count(); 
 
-	        $listInfo = Db::table('gwash_system_admin_user')->alias('a')->field('a.id,a.username,a.nickname,a.status,a.login_count,a.last_login,a.last_ip,a.last_city,c.name')
+	        $listInfo = model('SystemAdminUser')
+				        ->alias('a')
+				        ->field('a.id,a.username,a.nickname,a.status,a.login_count,a.last_login,a.last_ip,a.last_city,c.name')
 	                    ->join('gwash_system_auth_group_access b','a.id = b.uid','left')
 	                    ->join('gwash_system_auth_group c','b.groupId = c.id','left')
 	                    ->order('id', 'desc')
@@ -94,7 +98,7 @@ class AdminUser extends Base {
             $data['nickname'] = input('post.nickname','','trim');
             $data['username'] = input('post.username','','trim');   
             $data['mobile'] = input('post.mobile','','trim');  
-            $has = Db::name('system_admin_user')->where(array('username' => $data['username']))->count(); 
+            $has = model('SystemAdminUser')->where(array('username' => $data['username']))->count(); 
             if ($has) {
                 return $this->ajaxError('用户名已经存在，请重设！');
             }
@@ -102,7 +106,7 @@ class AdminUser extends Base {
             $data['password'] = md5($data['password']);
             $data['regIp'] = get_client_ip();
             $data['regTime'] = time(); 
-            $res = Db::name('system_admin_user')->insertGetId($data);
+            $res = model('SystemAdminUser')->insertGetId($data);
             if ($res === false) {
             	return $this->ajaxError('操作失败');
             } else {
@@ -127,11 +131,11 @@ class AdminUser extends Base {
 	        if ($isAdmin) {
 	            return $this->ajaxError('超级管理员不可以被操作');
 	        }
-	        $result = Db::name('system_admin_user')->where('id', $id)->find();
+	        $result = model('SystemAdminUser')->where('id', $id)->find();
 	        if (!$result) {
 	        	return $this->ajaxError('参数非法');
 	        }
-	        $res = Db::name('system_admin_user')->where('id', $id)->update(array('status' => 0));
+	        $res = model('SystemAdminUser')->where('id', $id)->update(array('status' => 0));
 	        if ($res === false) {
 	        	return $this->ajaxError('操作失败');
 	        } else {
@@ -152,11 +156,11 @@ class AdminUser extends Base {
 	        if ($isAdmin) {
 	            return $this->ajaxError('超级管理员不可以被操作');
 	        }
-    		$result = Db::name('system_admin_user')->where('id', $id)->find();
+    		$result = model('SystemAdminUser')->where('id', $id)->find();
 	        if (!$result) {
 	        	return $this->ajaxError('参数非法');
 	        }	        
-	        $res = Db::name('system_admin_user')->where('id', $id)->update(array('status' => 1));
+	        $res = model('SystemAdminUser')->where('id', $id)->update(array('status' => 1));
 	        if ($res === false) {
 	        	return $this->ajaxError('操作失败');
 	        } else {
@@ -177,19 +181,19 @@ class AdminUser extends Base {
 	        if ($isAdmin) {
 	            return $this->ajaxError('超级管理员不可以被操作');
 	        }
-    		$result = Db::name('system_admin_user')->where('id', $id)->find();
+    		$result = model('SystemAdminUser')->where('id', $id)->find();
 	        if (!$result) {
 	        	return $this->ajaxError('参数非法');
 	        }
 	        if ($result['status']) {
 	        	return $this->ajaxError("只能删除禁用的管理员");
 	        }	
-	        $res = Db::name('system_admin_user')->where(array('id' => $id,'status'=>0))->delete();
+	        $res = model('SystemAdminUser')->where(array('id' => $id,'status'=>0))->delete();
 	        if ($res === false) {
 	            return $this->ajaxError('操作失败');
 	        } else {
-	        	Db::name('system_admin_user_action')->where('id', $id)->delete();
-	        	Db::name('system_admin_user_data')->where('id', $id)->delete();	        	
+	        	model('SystemAdminUserAction')->where('id', $id)->delete();
+	        	model('SystemAdminUserData')->where('id', $id)->delete();	        	
 	            return $this->ajaxSuccess('操作成功');
 	        }    		
     	}

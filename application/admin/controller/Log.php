@@ -44,8 +44,8 @@ class Log extends Base {
 	                }
 	            }
 	        }
-	        $total = Db::name('system_admin_user_action')->where($where)->count();
-	        $info = Db::name('system_admin_user_action')->where($where)->limit($start, $limit)->select();
+	        $total = model('SystemAdminUserAction')->where($where)->count();
+	        $info = model('SystemAdminUserAction')->where($where)->limit($start, $limit)->select();
 	        $data = array(
 	            'draw'            => $draw,
 	            'recordsTotal'    => $total,
@@ -64,11 +64,11 @@ class Log extends Base {
     public function del() {
     	if ($this->request->isPost()) {
     		$id = input('post.id','0','trim');
-    		$result = Db::name('system_admin_user_action')->where('id', $id)->count();
+    		$result = model('SystemAdminUserAction')->where('id', $id)->count();
     		if (!$result) {
     			return $this->ajaxError('参数非法');
     		}
-	    	$res = Db::name('system_admin_user_action')->where('id', $id)->delete();
+	    	$res = model('SystemAdminUserAction')->where('id', $id)->delete();
 	        if ($res === false) {
 	            return $this->ajaxError('操作失败');
 	        } else {
@@ -85,7 +85,7 @@ class Log extends Base {
     public function showDetail() {
         if ($this->request->isGet()) { 
         	$id = input('get.id','0','trim'); 
-            $listInfo = Db::name('system_admin_user_action')->where('id', $id)->find();
+            $listInfo = model('SystemAdminUserAction')->where('id', $id)->find();
             $this->assign('detail', $listInfo);
             return $this->fetch('showDetail');
         }

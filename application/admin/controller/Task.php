@@ -52,8 +52,8 @@ class Task extends Base{
 			if ($is_on !='' ) {
 	        	$where['is_on'] = ['like','%'.$is_on.'%'];
 	        }		
-	        $total = Db::name('system_auto_task')->where($where)->count();
-	        $info = Db::name('system_auto_task')->where($where)->limit($start, $limit)->order('type,task_code,task_id desc')->select();
+	        $total = model('SystemTaskModel')->where($where)->count();
+	        $info = model('SystemTaskModel')->where($where)->limit($start, $limit)->order('type,task_code,task_id desc')->select();
 	  
 	        if (is_array($info)) {
 	        	$model = new SystemTaskModel();

@@ -122,11 +122,11 @@ class Menu extends Base {
     public function open() {
     	if ($this->request->isPost()) {
     		$id = input('post.id', '0', 'trim');
-    		$result = Db::name('system_menu')->where(['id'=>$id])->count();
+    		$result = model('SystemMenu')->where(['id'=>$id])->count();
     		if (!$result) {
     			return $this->ajaxError('参数非法');
     		}
-    	    $res = Db::name('menu')->where(array('id' => $id))->update(array('status' => 0));
+    	    $res = model('SystemMenu')->where(array('id' => $id))->update(array('status' => 0));
 	        if ($res === false) {
 	            return $this->ajaxError('操作失败');
 	        } else {
@@ -144,11 +144,11 @@ class Menu extends Base {
     public function close() {
     	if ($this->request->isPost()) {
     		$id = input('post.id', '0', 'trim');
-    		$result = Db::name('system_menu')->where(['id'=>$id])->count();
+    		$result = model('SystemMenu')->where(['id'=>$id])->count();
     		if (!$result) {
     			return $this->ajaxError('参数非法');
     		}
-	    	$res = Db::name('menu')->where(array('id' => $id))->update(array('status' => 1));
+	    	$res = model('SystemMenu')->where(array('id' => $id))->update(array('status' => 1));
 	        if ($res === false) {
 	            return $this->ajaxError('操作失败');
 	        } else {
@@ -194,7 +194,7 @@ class Menu extends Base {
     public function del() {
     	if ($this->request->isPost()) {
     		$id = input('post.id', '0', 'trim');
-    		$result = Db::name('system_menu')->where(['id'=>$id])->count();
+    		$result = model('SystemMenu')->where(['id'=>$id])->count();
     		if (!$result) {
     			return $this->ajaxError('参数非法');
     		}

@@ -51,15 +51,9 @@ class ConfigDict extends Base
 				$where['status'] = $status;
 			}
 	
-			$total = Db::name('system_config_dict')->order('create_time desc')
-                    ->where($where)
-                    ->count(); 
+			$total = model('SystemConfigDict')->order('create_time desc')->where($where)->count(); 
 
-	        $listInfo = Db::name('system_config_dict')
-	                    ->order('id', 'desc')
-	                    ->limit($start, $limit)
-	                    ->where($where)
-	                    ->select();  
+	        $listInfo = model('SystemConfigDict')->order('id', 'desc')->limit($start, $limit)->where($where)->select();  
 
 	        if ($listInfo) {
 	        	foreach ($listInfo as $key=>$value) {       		
@@ -93,7 +87,7 @@ class ConfigDict extends Base
         if($this->request->isPost()){
             $data = input();
             $data['create_time'] = time();
-            if(Db::name('system_config_dict')->insert($data)){
+            if(model('SystemConfigDict')->insert($data)){
                 cache("DB_CONFIG_DICT_DATA",null);
                 return $this->ajaxSuccess('添加成功');
             } else {
@@ -118,7 +112,7 @@ class ConfigDict extends Base
         if( $this->request->isGet() ) {
             $id = input('get.id', '0', 'trim');
             if( $id ){
-                $detail = Db::name('system_config_dict')->where('id', $id)->find();
+                $detail = model('SystemConfigDict')->where('id', $id)->find();
                 $this->assign('detail', $detail);
                 return $this->fetch('config_dict/add');
             }else{
@@ -128,7 +122,7 @@ class ConfigDict extends Base
             $data = $this->request->post();
             $data['id'] = input($data['id'], 0 , 'trim'); 
             $data['update_time'] = time();
-            $res = Db::name('system_config_dict')->where('id', $id)->update($data);
+            $res = model('SystemConfigDict')->where('id', $id)->update($data);
             if( $res === false ) {
                 return $this->ajaxError('操作失败');
             } else {
@@ -149,11 +143,11 @@ class ConfigDict extends Base
     {
     	if ($this->request->isPost()) {
     		$id = input('post.id', 0 , 'trim');
-    		$result = Db::name('system_config_dict')->where('id', $id)->count();
+    		$result = model('SystemConfigDict')->where('id', $id)->count();
     		if (!$result) {
     			return $this->ajaxError('参数非法');
     		}
-    		$res = Db::name('system_config_dict')->where('id', $id)->delete();
+    		$res = model('SystemConfigDict')->where('id', $id)->delete();
 	        if ($res === false) {
 	            return $this->ajaxError('操作失败');
 	        } else {
@@ -172,11 +166,11 @@ class ConfigDict extends Base
     {
     	if ($this->request->isPost()) {
     		$id = input('post.id', 0 , 'trim');
-    		$result = Db::name('system_config_dict')->where('id', $id)->count();
+    		$result = model('SystemConfigDict')->where('id', $id)->count();
     		if (!$result) {
     			return $this->ajaxError('参数非法');
     		}
-	    	$res = Db::name('system_config_dict')->where('id', $id)->update(array('status' => 0));
+	    	$res = model('SystemConfigDict')->where('id', $id)->update(array('status' => 0));
 	        if ($res === false) {
 	            return $this->ajaxError('操作失败');
 	        } else {
