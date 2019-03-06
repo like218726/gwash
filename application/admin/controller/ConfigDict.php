@@ -56,7 +56,8 @@ class ConfigDict extends Base
                     ->count(); 
 
 	        $listInfo = Db::name('system_config_dict')
-	                    ->order('id', 'desc')->limit($start, $limit)
+	                    ->order('id', 'desc')
+	                    ->limit($start, $limit)
 	                    ->where($where)
 	                    ->select();  
 

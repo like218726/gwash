@@ -58,7 +58,8 @@ class Permission extends Base {
                     ->count(); 
 
 	        $listInfo = Db::name('system_auth_group')
-	                    ->order('id', 'desc')->limit($start, $limit)
+	                    ->order('id', 'desc')
+	                    ->limit($start, $limit)
 	                    ->where($where)
 	                    ->select();  
 

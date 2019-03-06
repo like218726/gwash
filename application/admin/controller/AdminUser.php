@@ -51,7 +51,8 @@ class AdminUser extends Base {
 	        $listInfo = Db::table('gwash_system_admin_user')->alias('a')->field('a.id,a.username,a.nickname,a.status,a.login_count,a.last_login,a.last_ip,a.last_city,c.name')
 	                    ->join('gwash_system_auth_group_access b','a.id = b.uid','left')
 	                    ->join('gwash_system_auth_group c','b.groupId = c.id','left')
-	                    ->order('id', 'desc')->limit($start, $limit)
+	                    ->order('id', 'desc')
+	                    ->limit($start, $limit)
 	                    ->where($where)
 	                    ->select();  
 
