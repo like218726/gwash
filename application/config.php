@@ -245,7 +245,7 @@ return [
     'APP_NAME'    => 'Gwash智能洗眼镜',
 	'COMPANY_NAME' => '深圳市吉图软件开发有限公司',
 	// 后台在线时长设定，超时缓存过期
-    'ONLINE_TIME' => 360000,
+    'ONLINE_TIME' => 36000,
     //T环境项目目录地址
     'SITE_URL' => 'http://www.gwash.com/',
     //后台管理员

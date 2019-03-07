@@ -195,6 +195,9 @@ class Permission extends Base {
             if (!$data['uid']) {
             	return $this->ajaxError('用户ID不能为空');
             }
+            if ($data['uid'] == 1) {
+            	return $this->ajaxError("超级管理员不允许操作");
+            }            
             if (!isset($data['groupAccess'])) {
             	return $this->ajaxError("授权内容不能为空");
             }

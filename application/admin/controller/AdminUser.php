@@ -66,7 +66,7 @@ class AdminUser extends Base {
 		                $listInfo[$key]['name'] = '超级管理员';	                
 		            }
 	                $listInfo[$key]['last_login'] = $value['last_login'] ? date('Y-m-d H:i:s', $value['last_login']) : "";	
-	                $listInfo[$key]['status'] = $value['status']== 1 ? '启用' : '禁用';
+	                $listInfo[$key]['status'] = $value['status']== 1 ? '<span class="layui-btn">启用</span>' : '<span class="layui-btn layui-btn-danger">禁用<span>';
 	        	}
 	        } else {
 	        	$listInfo = '';
