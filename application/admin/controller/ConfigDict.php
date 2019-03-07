@@ -1,8 +1,6 @@
 <?php
 namespace app\admin\controller;
 
-use think\Db;
-
 class ConfigDict extends Base
 {
 	public $status_arr = [''=>'请选择','0' => '禁用','1' => '启用'];
@@ -89,7 +87,7 @@ class ConfigDict extends Base
             $data['create_time'] = time();
             if(model('SystemConfigDict')->insert($data)){
                 cache("DB_CONFIG_DICT_DATA",null);
-                return $this->ajaxSuccess('添加成功');
+                return $this->ajaxSuccess('操作成功');
             } else {
                 return $this->ajaxError('操作失败');
             }
@@ -127,7 +125,7 @@ class ConfigDict extends Base
                 return $this->ajaxError('操作失败');
             } else {
                 cache("DB_CONFIG_DICT_DATA",null);
-                return $this->ajaxSuccess('编辑成功');
+                return $this->ajaxSuccess('操作成功');
             }
 
         }

@@ -1,7 +1,6 @@
 <?php
-namespace app\admin\controller;
 
-use think\Db;
+namespace app\admin\controller;
 
 class System extends Base
 {

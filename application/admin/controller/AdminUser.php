@@ -1,7 +1,6 @@
 <?php
 
 namespace app\admin\controller;
-use think\Db;
 
 class AdminUser extends Base { 
 	
@@ -192,8 +191,8 @@ class AdminUser extends Base {
 	        if ($res === false) {
 	            return $this->ajaxError('操作失败');
 	        } else {
-	        	model('SystemAdminUserAction')->where('id', $id)->delete();
-	        	model('SystemAdminUserData')->where('id', $id)->delete();	        	
+	        	model('SystemAdminUserAction')->where('uid', $id)->delete();
+	        	model('SystemAdminUserData')->where('uid', $id)->delete();	        	
 	            return $this->ajaxSuccess('操作成功');
 	        }    		
     	}

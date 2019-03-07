@@ -1,13 +1,6 @@
 <?php
-namespace app\admin\controller;
 
-/**
- * 
- * 登陆
- * @author Administrator
- *
- */
-use think\Request;
+namespace app\admin\controller;
 
 use think\Loader;
 
@@ -54,8 +47,8 @@ class Login extends Base {
 	                //更新用户数据
 	                $userData = model('SystemAdminUserData')->where(array('uid' => $userInfo['id']))->find();
 	                $data = array();
-	                $request = Request::instance();
-	                $ip = $request->ip();
+	                
+	                $ip = $this->request->ip();
 	
 	                if ($userData) {
 	                    $data['loginTimes'] = $userData['loginTimes'] + 1;

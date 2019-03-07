@@ -1,7 +1,6 @@
 <?php
-namespace app\admin\model;
 
-use think\Db;
+namespace app\admin\model;
 
 use think\Model;
 
@@ -15,7 +14,7 @@ class SystemMenu extends Model {
 	 * 
 	 */
 	public function getMenuInfoById($id,$status) {
-		$result = Db::name('system_menu')->where(['id'=>$id])->find();
+		$result = $this->where(['id'=>$id])->find();
 		$result ? $result['status'] = $status[$result['status']] : "";
 		return $result;
 	}

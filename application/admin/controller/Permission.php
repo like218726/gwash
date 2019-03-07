@@ -1,16 +1,6 @@
 <?php
+
 namespace app\admin\controller;
-
-/**
- * 权限管理控制器
- * @since   2018-11-07
- * @author  licg
- */
-use think\Db;
-
-use think\console\Input;
-
-use think\Request;
 
 class Permission extends Base {
 
@@ -328,9 +318,9 @@ class Permission extends Base {
             return $this->ajaxSuccess('操作成功');
         } elseif ($this->request->isGet()) {
         	$groupId = input('post.id', '0' ,'trim');
-            $has = model('SystemAuthRule')->where(array('groupId' => $groupId))->select();
+            $has = model('SystemAuthRule')->where(array('groupId' => $groupId))->select()->toArray();
             $hasRule = array_column($has, 'url');
-            $originList = model('SystemAuthRule')->order('sort desc')->select();
+            $originList = model('SystemMenu')->order('sort desc')->select()->toArray();
 
             $list = listToTree($originList);
             $this->assign('hasRule', $hasRule);

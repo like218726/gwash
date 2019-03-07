@@ -1,13 +1,6 @@
 <?php
+
 namespace app\admin\controller;
-/**
- * 菜单管理控制器
- * Created by zendstudio.
- * User: licg
- * Date: 2018/11/08
- * Time: 11:36
- */
-use think\Db;
 
 class Menu extends Base {
 	

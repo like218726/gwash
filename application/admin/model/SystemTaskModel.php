@@ -1,8 +1,9 @@
 <?php
+
 namespace app\admin\model;
-use think\Db;
 
 use think\Model;
+
 class SystemTaskModel extends Model{
     
 	/**
@@ -32,20 +33,20 @@ class SystemTaskModel extends Model{
 			
 			//刷新复制的命令
 			if($newData['platform_code']){
-				Db::name('system_auto_task')->where('task_code',$row['code'])->update($newData);
+				$this->where('task_code',$row['code'])->update($newData);
 			}
 		}
 		$services = $datas;
 		$datas = array_values($datas);
-		Db::name('system_auto_task')->insertAll($datas, $options = array('task_code'), $replace = true);
+		$this->insertAll($datas, $options = array('task_code'), $replace = true);
 		
-		$rows = Db::name('system_auto_task')->select();
+		$rows = $this->select();
 		
 		foreach($rows as $row)
 		{
 			$code = $row['task_code'];
 			if(!isset($services[$code])){
-				Db::name('system_auto_task')->where('task_code', $code)->where('is_copy', 0)->delete();
+				$this->where('task_code', $code)->where('is_copy', 0)->delete();
 			}
 		}
 		
@@ -55,7 +56,7 @@ class SystemTaskModel extends Model{
 	//复制记录
 	public function copy($task_id)
 	{  
-		$row = Db::name('system_auto_task')->where('task_id',$task_id)->find();
+		$row = $this->where('task_id',$task_id)->find();
 		if(!$row){
 			return array('code'=>'-1', 'msg'=>'复制错误');
 		}
@@ -78,7 +79,7 @@ class SystemTaskModel extends Model{
 		$data['shop_ids'] = '';
 		$data['is_on'] = 0;
 		$data['last_exec_time'] = '';			
-		$id = Db::name('system_auto_task')->insertGetId($data);
+		$id = $this->insertGetId($data);
 		if ($id === false) {
 			return array('code'=>'-1', 'msg'=>'复制失败');
 		} else {
@@ -93,7 +94,7 @@ class SystemTaskModel extends Model{
 	{
 		$where['task_code'] = $task_code;
 		$where['type'] = $type;
-		$rows = Db::name('system_auto_task')->where($where)->select();    
+		$rows = $this->where($where)->select();    
 		$copy_num = 0;
 		foreach($rows as $row){
 			if($row['is_copy']>$copy_num){
