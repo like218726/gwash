@@ -39,8 +39,8 @@ class Login extends Base {
 	            if ($userInfo['status']) {
 	
 	                //保存用户信息和登录凭证
-	                cache($userInfo['id'], session_id(), config('ONLINE_TIME'));
-	                session('uid', $userInfo['id']);
+	                cache(config('cache.prefix').$userInfo['id'], session_id(), config('ONLINE_TIME'));
+	                session(config('cache.prefix').'uid', $userInfo['id']);
 	                session('nick_name', $userInfo['nickname']);
 	                session('real_name', $userInfo['realname']);
 	

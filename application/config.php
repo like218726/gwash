@@ -192,7 +192,7 @@ return [
         // 缓存保存目录
         'path'   => CACHE_PATH,
         // 缓存前缀
-        'prefix' => '',
+        'prefix' => 'gwash_',
         // 缓存有效期 0表示永久缓存
         'expire' => 0,
     ],
@@ -204,7 +204,7 @@ return [
     'session'                => [
         'id'             => '',
         // SESSION_ID的提交变量,解决flash上传跨域
-        'var_session_id' => '',
+        'var_session_id' => 'gwash_',
         // SESSION 前缀
         'prefix'         => 'think',
         // 驱动方式 支持redis memcache memcached
@@ -218,7 +218,7 @@ return [
     // +----------------------------------------------------------------------
     'cookie'                 => [
         // cookie 名称前缀
-        'prefix'    => '',
+        'prefix'    => 'gwash_',
         // cookie 保存时间
         'expire'    => 2592000,
         // cookie 保存路径

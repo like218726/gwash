@@ -3,7 +3,8 @@
     <fieldset class="layui-elem-field">
         <legend>系统配置 - 权限管理</legend>
         <div class="layui-field-box">
-            <form class="layui-form" id="form-admin-add" action="">           	
+            <form class="layui-form" id="form-admin-add" action="">
+            	
                 <div class="layui-inline">
                     <label class="layui-form-label label-width">权限组：</label>
                     <div class="layui-input-inline">
@@ -28,7 +29,6 @@
 				
                 <div class="layui-inline">
                     <span class="layui-btn sub">查询</span>
-                    <span class="layui-btn resetform layui-btn-primary">重置</span>
                 </div>
             </div>
             </form>
@@ -50,12 +50,8 @@
     </fieldset>
 </block>
 <block name="myScript">
-	<script>
-   	$(".resetform").click(function(){
-    	$('#form-admin-add')[0].reset();
-   	})		
-	</script>	
     <script>
+    	
 		/**
 		 * 
 		 * @param {Object} obj
@@ -69,7 +65,6 @@
             $(document).on('click', '.confirm', function () {
                 var ownObj = $(this);
                 layer.confirm(ownObj.attr('data-info'), {
-					title: ownObj.attr('data-title'), 
                     btn: ['确定','取消'] //按钮
                 }, function(){
                     $.ajax({
@@ -93,7 +88,6 @@
 
             $('.api-add').on('click', function () {
                 layer.open({
-					title: '添加',
                     type: 2,
                     area: ['80%', '80%'],
                     maxmin: true,
@@ -104,11 +98,10 @@
             $(document).on('click', '.edit', function () {
                 var ownObj = $(this);
                 layer.open({
-					title: ownObj.attr('data-title'),
                     type: 2,
                     area: ['80%', '80%'],
                     maxmin: true,
-                    content: ownObj.attr('data-url')+'&id='+ownObj.attr('data-id')
+                    content: ownObj.attr('data-url')+'?id='+ownObj.attr('data-id')
                 });
             });
 
@@ -141,7 +134,7 @@
                             "render": function(data, type, row){
                                 var returnStr = '';   
 								returnStr += '<span class="layui-btn edit" ' +
-                                    'data-id="' + row.id +'" data-title="访问权限" data-url="rule.html?id='+row.id+'">访问授权</span>';
+                                    'data-id="' + row.id +'"  data-url="{:url(\'rule\')}">访问授权</span>';
 								return returnStr;	
                             }
                         },{
@@ -149,7 +142,7 @@
                             "render": function(data, type, row){
                                 var returnStr = '';   
 								returnStr += '<span class="layui-btn edit" ' +
-                                    'data-id="' + row.id +'" data-title="成员权限" data-url="member.html?id='+row.id+'">成员授权</span>';
+                                    'data-id="' + row.id +'" data-url="{:url(\'member\')}">成员授权</span>';
 								return returnStr;	
                             }
                         },{
@@ -157,13 +150,13 @@
                             "render":function(data, type, row){
                                 var returnStr = '';
                                 returnStr += '<span class="layui-btn layui-btn-danger confirm" data-info="你确定禁用当前权限组么？" ' +
-                                    'data-id="' + row.id +'" data-title="禁用" data-url="{:url(\'close\')}">禁用</span>';
+                                    'data-id="' + row.id +'" data-url="{:url(\'close\')}">禁用</span>';
 								returnStr += '<span class="layui-btn confirm" data-info="你确定启用当前权限组么？" ' +
-                                    'data-id="' + row.id +'" data-title="启用" data-url="{:url(\'open\')}">启用</span>';	
+                                    'data-id="' + row.id +'" data-url="{:url(\'open\')}">启用</span>';	
 								returnStr += '<span class="layui-btn edit layui-btn-normal" ' +
-                                    'data-id="' + row.id +'" data-title="编辑" data-url="edit.html?id='+row.id+'">编辑</span>';	
+                                    'data-id="' + row.id +'" data-url="edit.html">编辑</span>';	
                                 returnStr += '<span class="layui-btn layui-btn-danger confirm" ' +
-                                    'data-id="' + row.id +'"data-title="删除" data-info="你确定删除当前权限组么？" data-url="{:url(\'del\')}">删除</span>';
+                                    'data-id="' + row.id +'" data-info="你确定删除当前权限组么？" data-url="{:url(\'del\')}">删除</span>';
                                 return returnStr;
                             }
                         }

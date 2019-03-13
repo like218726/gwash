@@ -142,7 +142,12 @@ class Base extends Controller {
     private function checkLogin() { 
         if (isset($this->uid) && !empty($this->uid)) {
             $sidNow = session_id();
-            $sidOld = cache($this->uid);
+            $sidOld = cache(config('cache.prefix').$this->uid); 
+
+            if (! cache(config('cache.prefix').$this->uid)) {
+            	$this->error("您在".(config('ONLINE_TIME')/3600)."小时内 长时间未操作或相同账号登录,请重新登录！", url('Login/index'));
+            }   
+            
             if (isset($sidOld) && !empty($sidOld)) {
                 if ($sidOld !== $sidNow) {
                     $this->error("您的账号在别的地方登录了，请重新登录！", url('Login/index'));

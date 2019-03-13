@@ -32,8 +32,8 @@ class Permission extends Base {
 			$limit = input('get.length', 0, 'trim') ? input('get.length', 0, 'trim') : 20;
 			$draw = input('get.draw', 0, 'trim') ? input('get.draw', 0, 'trim') : 0;
 			
-			$name = input('post.name', '', 'tirm');
-			$status = input('post.status', '', 'trim');
+			$name = input('get.name', '', 'tirm');
+			$status = input('get.status', '', 'trim');
 		
 			if ($name != '') {
 				$where['name'] = ['like','%'.$name.'%'];
@@ -250,7 +250,7 @@ class Permission extends Base {
                 $res = model('SystemAdminUser')
                 	   ->alias('tp_user')
                 	   ->where(array('tp_user.id' => array('in', $uidArr)))
-                	   ->join('gwash_system_admin_user_data tp_user_data', 'tp_user.id = tp_user_data.uid', 'left')
+                	   ->join('SystemAdminUserData tp_user_data', 'tp_user.id = tp_user_data.uid', 'left')
                 	   ->field('tp_user.id,tp_user_data.uid,tp_user.username,tp_user.nickname,tp_user_data.loginTimes,tp_user_data.lastLoginIp,tp_user_data.lastLoginTime,tp_user.status')
                 	   ->select();         
             } else {
@@ -297,7 +297,7 @@ class Permission extends Base {
             	return $this->error('权限不能为空');
             }
             $needAdd = array();
-            $has = model('SystemAuthRule')->where(array('groupId' => $groupId))->select();
+            $has = model('SystemAuthRule')->where(array('groupId' => $groupId))->select()->toArray();
             $hasRule = array_column($has, 'url');
             $needDel = array_flip($hasRule);
             foreach ($postData['rule'] as $key => $value) {
