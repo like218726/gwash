@@ -5,7 +5,13 @@ namespace app\admin\controller;
 use app\admin\model\SystemTaskModel;
 
 class Task extends Base{
-		
+
+	protected $result;
+	
+	public function _initialize() {
+		$this->result = model('TableInfo')->getTableInfo('gwash.gwash_system_auto_task');
+	}
+	
 	/**
 	 * 
 	 * 列表
@@ -17,7 +23,7 @@ class Task extends Base{
 			$this->assign('module', $model->moduleType());
 			$this->assign("s_module",'');
 			$this->assign('name','');
-			$this->assign('is_on',array(''=>'请选择','0'=>'关闭','1'=>'开启'));
+			$this->assign('is_on',$this->result['is_on']);
 			$this->assign('s_is_on','');
 			$this->assign('base_path', $_SERVER['DOCUMENT_ROOT'].'/');  
 			$BaseUrl = $_SERVER['SERVER_PORT']<>80 ? $_SERVER['REQUEST_SCHEME'].":".$_SERVER['SERVER_PORT']."://".$_SERVER['SERVER_NAME'].$_SERVER['SCRIPT_NAME'] : $_SERVER['REQUEST_SCHEME']."://".$_SERVER['SERVER_NAME'].$_SERVER['SCRIPT_NAME'];	
@@ -57,7 +63,7 @@ class Task extends Base{
 	        if (is_array($info)) {
 	        	$model = new SystemTaskModel();
 	        	$type = $model->moduleType();
-	        	$status = ['0'=>'关闭','1'=>'开启'];
+	        	$status = $this->result['is_on'];
 		        foreach ($info  as $k=>$row) {
 		        	$info[$k]['type'] = $type[$row['type']];
 		        	$info[$k]['is_on'] = $status[$row['is_on']];

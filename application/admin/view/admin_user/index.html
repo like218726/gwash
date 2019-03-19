@@ -14,7 +14,8 @@
                 <div class="layui-inline">
                     <label class="layui-form-label label-width">状态：</label>
                     <div class="layui-input-inline">
-                    	<select name="status">						
+                    	<select name="status">	
+							<option value="">请选择</option>					
 							{foreach $status_arr as $key=>$value}
 								{if $status eq ''}
 								<option value="{$key}">{$value}</option>

@@ -4,11 +4,12 @@ namespace app\admin\controller;
 
 class Menu extends Base {
 	
-	public $status_arr = [''=>'请选择','0'=>'显示','1'=>'隐藏'];
-	public $level = ['0'=>'顶级菜单','1'=>'一级菜单','2'=>'菜单权限'];
-	public $status = '';
-	public $name = '';
-
+	protected $result;
+	
+	public function _initialize(){
+		$this->result = model('TableInfo')->getTableInfo('gwash.gwash_system_menu');
+	}
+	
     /**
      * 
      * 列表
@@ -17,9 +18,9 @@ class Menu extends Base {
      */
     public function index() {
     	if ($this->request->isGet()) {
-    		$this->assign('status_arr',$this->status_arr);
-    		$this->assign('status',$this->status);
-    		$this->assign('name',$this->name);
+    		$this->assign('status_arr',$this->result['status']);
+    		$this->assign('status','');
+    		$this->assign('name',"");
     		return $this->fetch();
     	}
         
@@ -68,9 +69,9 @@ class Menu extends Base {
 	            'recordsFiltered' => $total,
 	            'data'            => $info
 	        );
-	        $this->assign('status_arr',$this->status_arr);
-    		$this->assign('status',$status);
-    		$this->assign('name',$name);
+	        $this->assign('status_arr',$this->result['status']);
+    		$this->assign('status',"");
+    		$this->assign('name',"");
 	        $this->ajaxReturn($data, 'json');    		
     	}
     }
@@ -95,13 +96,7 @@ class Menu extends Base {
             }
         } else {
             $originList = model('SystemMenu')->where(['level'=>['in',['0','1']]])->order('sort asc')->select()->toArray();
-            $fid = '';
-            $id = input('id', '0', 'trim');
-            if (!empty($id)) {
-                $fid = $id;
-            } 
             $this->assign('options', $originList);
-            $this->assign('fid', $fid);
             return $this->fetch();
         }
     }

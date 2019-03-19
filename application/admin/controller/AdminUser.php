@@ -4,6 +4,12 @@ namespace app\admin\controller;
 
 class AdminUser extends Base { 
 	
+	protected $result;
+	
+	public function _initialize() {
+		$this->result = model('TableInfo')->getTableInfo('gwash.gwash_system_admin_user');
+	}
+	
 	/**
 	 * 
 	 * 列表
@@ -13,7 +19,7 @@ class AdminUser extends Base {
     	if ($this->request->isGet()) {
     		$this->assign('nickname','');
 	    	$this->assign('status','');
-	    	$this->assign('status_arr',array(''=>'请选择','0'=>'禁用','1'=>'启用'));
+	    	$this->assign('status_arr',$this->result['status']);
 	        return $this->fetch();
     	}
     }	
@@ -79,7 +85,7 @@ class AdminUser extends Base {
 	            'data'            => $listInfo,
 	        );
 	        $this->assign('username',$nickname);
-	        $this->assign('status_arr',array(''=>'请选择','0'=>'禁用','1'=>'启用'));
+	        $this->assign('status_arr',$this->result['status']);
 	        $this->assign('status',$status);
 	        $this->ajaxReturn($data, 'json');			
 		}	

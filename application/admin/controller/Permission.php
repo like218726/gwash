@@ -4,6 +4,12 @@ namespace app\admin\controller;
 
 class Permission extends Base {
 
+	protected $result;
+	
+	public function _initialize() {
+		$this->result = model('TableInfo')->getTableInfo('gwash.gwash_system_auth_group');
+	}
+	
 	/**
 	 * 
 	 * 列表
@@ -14,7 +20,7 @@ class Permission extends Base {
 			$listInfo = model('SystemAuthGroup')->select();
 	        $this->assign('list', $listInfo);
 	        $this->assign('name','');
-	        $this->assign('status_arr',[''=>'请选择','0'=>'禁用','1'=>'启用']);
+	        $this->assign('status_arr',$this->result['status']);
 	        $this->assign('status','');
 	        return $this->fetch();    		
     	}
@@ -62,7 +68,7 @@ class Permission extends Base {
 	            'data'            => $listInfo,
 	        );
 	        $this->assign('name',$name);
-	        $this->assign('status_arr',[''=>'请选择','0'=>'禁用','1'=>'启用']);
+	        $this->assign('status_arr',$this->result['status']);
 	        $this->assign('status',$status);
 	        $this->ajaxReturn($data, 'json');				
 		}  	

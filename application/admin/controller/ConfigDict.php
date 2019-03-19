@@ -3,12 +3,12 @@ namespace app\admin\controller;
 
 class ConfigDict extends Base
 {
-	public $status_arr = [''=>'请选择','0' => '禁用','1' => '启用'];
-	public $type;
-	public $status = '';
+	protected $type;
+	protected $result;
 	
 	public function _initialize() {
 		$this->type = config('CONFIG_TYPE_LIST');
+		$this->result = model('TableInfo')->getTableInfo('gwash.gwash_system_config_dict');
 	}
 	
     /**
@@ -19,8 +19,8 @@ class ConfigDict extends Base
     {
     	if ($this->request->isGet()) {
     		$this->assign('name','');
-    		$this->assign('status_arr',$this->status_arr);
-    		$this->assign('status',$this->status);
+    		$this->assign('status_arr',$this->result['status']);
+    		$this->assign('status',"");
     		$this->assign('type',$this->type);
     		return $this->fetch();
     	}
@@ -69,7 +69,7 @@ class ConfigDict extends Base
 	            'data'            => $listInfo,
 	        );
 	        $this->assign('name',$name);
-	        $this->assign('status_arr',$this->status_arr);
+	        $this->assign('status_arr',$this->result['status']);
 	        $this->assign('status',$status);
 	        $this->ajaxReturn($data, 'json');	    		
     	}
