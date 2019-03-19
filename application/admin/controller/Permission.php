@@ -257,6 +257,7 @@ class Permission extends Base {
                 $res = array();
             } 
             $this->assign('list', $res);
+            $this->assign('groupId', $groupId);
             return $this->fetch();    		
     	} else {
     		return $this->ajaxError('非法操作');
@@ -297,7 +298,7 @@ class Permission extends Base {
             	return $this->error('权限不能为空');
             }
             $needAdd = array();
-            $has = model('SystemAuthRule')->where(array('groupId' => $groupId))->select()->toArray();
+            $has = model('SystemAuthRule')->where(array('groupId' => $groupId, 'status'=>1))->select()->toArray();
             $hasRule = array_column($has, 'url');
             $needDel = array_flip($hasRule);
             foreach ($postData['rule'] as $key => $value) {
@@ -321,9 +322,9 @@ class Permission extends Base {
             return $this->ajaxSuccess('操作成功');
         } elseif ($this->request->isGet()) {
         	$groupId = input('post.id', '0' ,'trim');
-            $has = model('SystemAuthRule')->where(array('groupId' => $groupId))->select()->toArray();
+            $has = model('SystemAuthRule')->where(array('groupId' => $groupId, 'status'=>1))->select()->toArray();
             $hasRule = array_column($has, 'url');
-            $originList = model('SystemMenu')->order('sort desc')->select()->toArray();
+            $originList = model('SystemMenu')->where('status', 0)->order('sort desc')->select()->toArray();
 
             $list = listToTree($originList);
             $this->assign('hasRule', $hasRule);

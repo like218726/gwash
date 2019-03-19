@@ -3,8 +3,7 @@
     <fieldset class="layui-elem-field">
         <legend>系统配置 - 用户管理</legend>
         <div class="layui-field-box">
-            <form class="layui-form" id="form-admin-add" action="">
-            	
+            <form class="layui-form" id="form-admin-add" action="">          	
                 <div class="layui-inline">
                     <label class="layui-form-label label-width">用户昵称：</label>
                     <div class="layui-input-inline">
@@ -12,10 +11,10 @@
                     </div>
                 </div>				
 
-                <div class="layui-inline layui-form-item"">
+                <div class="layui-inline">
                     <label class="layui-form-label label-width">状态：</label>
                     <div class="layui-input-inline">
-                    	<select name="status" lay-filter="status">						
+                    	<select name="status">						
 							{foreach $status_arr as $key=>$value}
 								{if $status eq ''}
 								<option value="{$key}">{$value}</option>
@@ -29,9 +28,8 @@
 				
                 <div class="layui-inline">
                     <span class="layui-btn sub">查询</span>
-                    <span class="layui-btn resetform layui-btn-primary">重置</span>
+					<span class="layui-btn resetform layui-btn-primary">重置</span>
                 </div>
-            </div>
             </form>
 			<span class="layui-btn layui-btn-normal api-add"><i class="layui-icon">&#xe608;</i> 新增</span>
             <table class="layui-table" id="list-admin" lay-even>

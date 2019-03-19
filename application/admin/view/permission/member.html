@@ -33,7 +33,7 @@
                             {/if}
                         </td>
                         <td>
-                            <span class="layui-btn layui-btn-danger confirm" data-uid="{$vo['uid']}" data-info="你确定踢出当前用户么？" data-url="{:url('delMember')}">删除</span>
+                            <span class="layui-btn layui-btn-danger confirm" data-uid="{$vo['id']}" data-groupId='{$groupId}' data-info="你确定踢出当前用户么？" data-url="{:url('delMember')}">删除</span>
                         </td>
                     </tr>
                 {/volist}
@@ -42,7 +42,7 @@
         </div>
     </fieldset>
 </block>
-<block name="myScript">	
+<block name="myScript">
     <script>
         layui.use(['layer'], function() {
             $('.confirm').on('click', function () {
@@ -53,7 +53,7 @@
                     $.ajax({
                         type: "POST",
                         url: ownObj.attr('data-url'),
-                        data: {uid:ownObj.attr('data-uid'),groupId:{:input("id")}},
+                        data: {uid:ownObj.attr('data-uid'),groupId:attr('data-groupId')},
                         success: function(msg){
                             if( msg.code == 1 ){
                                 location.reload();
