@@ -4,6 +4,10 @@ namespace app\admin\controller;
 
 class Log extends Base {
 	
+	public function _initialize() {
+		parent::_initialize();
+	}
+	
 	/**
 	 * 
 	 * 列表

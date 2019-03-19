@@ -9,6 +9,7 @@ class Task extends Base{
 	protected $result;
 	
 	public function _initialize() {
+		parent::_initialize();
 		$this->result = model('TableInfo')->getTableInfo('gwash.gwash_system_auto_task');
 	}
 	

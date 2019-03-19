@@ -4,6 +4,11 @@ namespace app\admin\controller;
 
 class System extends Base
 {
+	
+	public function _initialize() {
+		parent::_initialize();
+	}	
+	
 	/**
 	 * 
 	 * 列表

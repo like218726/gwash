@@ -5,6 +5,11 @@ namespace app\admin\controller;
 use think\Cache;
 
 class Index extends Base { 
+	
+	public function _initialize() {
+		parent::_initialize();
+	}
+	
     public function index() {
     	if ($this->request->isGet()) {  
 	        $isAdmin = isAdministrator(); 

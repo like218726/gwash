@@ -6,6 +6,10 @@ use think\Loader;
 
 class Login extends Base {
 	
+	public function _initialize() {
+		parent::_initialize();
+	}	
+	
 	/**
 	 * 
 	 * 登陆入口
