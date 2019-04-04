@@ -2,16 +2,11 @@
 
 namespace app\admin\controller;
 
+use app\common\SystemMenu;
+
 class Menu extends Base {
 	
-	protected $result;
-	
-	public function _initialize(){
-		parent::_initialize();
-		$this->result = model('TableInfo')->getTableInfo('gwash.gwash_system_menu');
-	}
-	
-    /**
+	/**
      * 
      * 列表
      * @author licg
@@ -19,7 +14,7 @@ class Menu extends Base {
      */
     public function index() {
     	if ($this->request->isGet()) {
-    		$this->assign('status_arr',$this->result['status']);
+    		$this->assign('status_arr', SystemMenu::$SystemMenu['status']);
     		$this->assign('status','');
     		$this->assign('name',"");
     		return $this->fetch();
@@ -44,7 +39,7 @@ class Menu extends Base {
 	        	$where['name'] = ['like','%'.$name.'%'];
 	        }
 
-	        if (trim(input('status')) !='' ) {
+	        if ($status !='' ) {
 	        	$where['status'] = $status;
 	        }
 	        
@@ -53,7 +48,7 @@ class Menu extends Base {
 	        
 	        foreach ($info as $k=>$list) { 
 	       		$info[$k]['status'] = $list['status'] ? '隐藏' : '显示'; 	
-	        	$menu_info = model('SystemMenu')->getMenuInfoById($list['fid'],$this->status_arr); 
+	        	$menu_info = model('SystemMenu')->getMenuInfoById($list['fid'],SystemMenu::$SystemMenu['status']); 
 	        	if ($list['level'] == '1') {
 	        		$info[$k]['name'] = '|---'.$list['name'];
 	        	} elseif ($list['level'] == '2') {
@@ -61,7 +56,7 @@ class Menu extends Base {
 	        	} else {
 	        		$info[$k]['name'] = $list['name'];
 	        	}
-	        	$info[$k]['level_name'] = $this->level[$list['level']];
+	        	$info[$k]['level_name'] = SystemMenu::$SystemMenu['level'][$list['level']];
 	        	$info[$k]['fid'] = $menu_info['name'] ? $menu_info['name'] : '/';
 	        } 
 	        $data = array(
@@ -70,10 +65,9 @@ class Menu extends Base {
 	            'recordsFiltered' => $total,
 	            'data'            => $info
 	        );
-	        $this->assign('status_arr',$this->result['status']);
-    		$this->assign('status',"");
-    		$this->assign('name',"");
-	        $this->ajaxReturn($data, 'json');    		
+    		$this->assign('status', $name);
+    		$this->assign('name', $status);
+	        ajaxReturn($data, 'json');    		
     	}
     }
     
@@ -91,9 +85,9 @@ class Menu extends Base {
             $data['level'] = $menu_info['level']==0 ? 1 : ($menu_info['level']==1 ? 2 : 0);
             $res = model('SystemMenu')->insert($data);
             if ($res === false) {
-                return $this->ajaxError('操作失败');
+                return ajaxError('操作失败');
             } else {
-            	return $this->ajaxSuccess('操作成功');
+            	return ajaxSuccess('操作成功');
             }
         } else {
             $originList = model('SystemMenu')->where(['level'=>['in',['0','1']]])->order('sort asc')->select()->toArray();
@@ -113,13 +107,13 @@ class Menu extends Base {
     		$id = input('post.id', '0', 'trim');
     		$result = model('SystemMenu')->where(['id'=>$id])->count();
     		if (!$result) {
-    			return $this->ajaxError('参数非法');
+    			return ajaxError('参数非法');
     		}
     	    $res = model('SystemMenu')->where(array('id' => $id))->update(array('status' => 0));
 	        if ($res === false) {
-	            return $this->ajaxError('操作失败');
+	            return ajaxError('操作失败');
 	        } else {
-	            return $this->ajaxSuccess('操作成功');
+	            return ajaxSuccess('操作成功');
 	        }    		
     	}
     }
@@ -135,13 +129,13 @@ class Menu extends Base {
     		$id = input('post.id', '0', 'trim');
     		$result = model('SystemMenu')->where(['id'=>$id])->count();
     		if (!$result) {
-    			return $this->ajaxError('参数非法');
+    			return ajaxError('参数非法');
     		}
 	    	$res = model('SystemMenu')->where(array('id' => $id))->update(array('status' => 1));
 	        if ($res === false) {
-	            return $this->ajaxError('操作失败');
+	            return ajaxError('操作失败');
 	        } else {
-	            return $this->ajaxSuccess('操作成功');
+	            return ajaxSuccess('操作成功');
 	        }
     	}
        
@@ -168,9 +162,9 @@ class Menu extends Base {
             $data['level'] = $menu_info['level']==0 ? 1 : ($menu_info['level']==1 ? 2 : 0);
             $res = model('SystemMenu')->where(array('id' => $postData['id']))->update($postData);
             if ($res === false) {
-                return $this->ajaxError('操作失败');
+                return ajaxError('操作失败');
             } else {
-                return $this->ajaxSuccess('操作成功');
+                return ajaxSuccess('操作成功');
             }
         }
     }
@@ -185,19 +179,19 @@ class Menu extends Base {
     		$id = input('post.id', '0', 'trim');
     		$result = model('SystemMenu')->where(['id'=>$id])->count();
     		if (!$result) {
-    			return $this->ajaxError('参数非法');
+    			return ajaxError('参数非法');
     		}
     		
 	    	$childNum = model('SystemMenu')->where(array('fid' => $id))->count();
 	        if ($childNum) {
-	            return $this->ajaxError("当前菜单存在子菜单,不可以被删除!");
+	            return ajaxError("当前菜单存在子菜单,不可以被删除!");
 	        } 
 	        
 	        $res = model('SystemMenu')->where(array('id' => $id))->delete();
     		if ($res === false) {
-                return $this->ajaxError('操作失败');
+                return ajaxError('操作失败');
             } else {
-                return $this->ajaxSuccess('操作成功');
+                return ajaxSuccess('操作成功');
             }  		
     	}
     }

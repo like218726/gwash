@@ -6,9 +6,10 @@ use think\Model;
 class SystemConfigDict extends Model {
 
     /**
+     * 
      * 获取参数字典列表
      * @return array 参数字典数组
-     * @author wzj
+     * 
      */
     public function getDictLists()
     {
@@ -26,10 +27,11 @@ class SystemConfigDict extends Model {
 
 
     /**
+     * 
      * 根据参数字典类型解析配置
      * @param  integer $type  参数字典类型
      * @param  string  $value 参数字典值
-     * @author wzj
+     * 
      */
     private function parseDict($type, $value)
     {
@@ -48,5 +50,32 @@ class SystemConfigDict extends Model {
                 break;
         }
         return $value;
+    }
+    
+    /**
+     * 
+     * 根据模块ID查询模块名称
+     * @param unknown_type $module_id
+     */
+    public function getModuleId($module_id) {
+    	if ($module_id == 0) {
+    		return '公共模块';
+    	}
+    	$result = model('SystemMenu')->where('id', $module_id)->value('name');
+    	return $result;
+    }
+    
+    /**
+     * 
+     * 获取模型类型
+     * 
+     */
+    public function getModule() {
+    	$result = model('SystemMenu')->where(['level'=>1, 'fid'=>['<>',3]])->select();
+    	$data['0'] = '公共模块';
+    	foreach ($result as $k=>$v) {
+    		$data[$v['id']] = $v['name'];
+    	}
+    	return $data;
     }
 }

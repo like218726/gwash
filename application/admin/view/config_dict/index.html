@@ -38,11 +38,14 @@
             <table class="layui-table" id="list-admin" lay-even>
                 <thead>
                 <tr>
-                    <th>编号</th>
+                    <th>模块</th>
                     <th>名称</th>
-                    <th>标题</th>
-                    <th>类型</th>
-                    <th>状态</th>
+                    <th>代码</th>
+					<th>类型</th>
+                    <th>参数值</th>
+					<th>预设值</th>
+					<th>说明</th>
+					<th>更新时间</th>
                     <th>操作</th>
                 </tr>
                 </thead>
@@ -93,7 +96,7 @@
 
             $('.api-add').on('click', function () {
                 layer.open({
-					title: '添加',
+					title: '新增',
                     type: 2,
                     area: ['80%', '80%'],
                     maxmin: true,
@@ -137,27 +140,34 @@
                     },
                     columnDefs:[
                         {
-                            "targets":5,
+                            "targets": -1,
                             "render":function(data, type, row){
                                 var returnStr = '';
-                                returnStr += '<span class="layui-btn layui-btn-danger confirm" data-info="你确定禁用当前参数字典么？" ' +
-                                    'data-id="' + row.id +'" data-title="禁用" data-url="{:url(\'close\')}">禁用</span>';
-								returnStr += '<span class="layui-btn confirm" data-info="你确定启用当前参数字典么？" ' +
-                                    'data-id="' + row.id +'" data-title="启用" data-url="{:url(\'open\')}">启用</span>';	
-                                returnStr += '<span class="layui-btn layui-btn-danger confirm" ' +
-                                    'data-id="' + row.id +'" data-title="删除" data-info="你确定删除当前参数字典么？" data-url="{:url(\'del\')}">删除</span>';
-                                return returnStr;
+								if (row.is_default == 0) {
+	                                returnStr += '<span class="layui-btn layui-btn-danger confirm" data-info="你确定禁用当前参数字典么？" ' +
+	                                    'data-id="' + row.id +'" data-title="禁用" data-url="{:url(\'close\')}">禁用</span>';
+									returnStr += '<span class="layui-btn confirm" data-info="你确定启用当前参数字典么？" ' +
+	                                    'data-id="' + row.id +'" data-title="启用" data-url="{:url(\'open\')}">启用</span>';
+									returnStr += '<span class="layui-btn edit layui-btn-normal" ' +
+	                                    'data-id="' + row.id +'" data-url="{:url(\'edit\')}">编辑</span>';			
+	                                returnStr += '<span class="layui-btn layui-btn-danger confirm" ' +
+	                                    'data-id="' + row.id +'" data-title="删除" data-info="你确定删除当前参数字典么？" data-url="{:url(\'del\')}">删除</span>';									
+								}
+								return returnStr;
                             }
                         }
                     ],
                     iDisplayLength : 20,
-                    aLengthMenu : [20, 30, 50],
+                    aLengthMenu : [20, 30, 50],				
                     columns: [
-                        {"data": "id"},
+                        {"data": "module_id"},
                         {"data": "name"},
-                        {"data": "title" },
-                        {"data": "type" },
-                        {"data": "status" },
+                        {"data": "code" },
+						{"data": "type" },
+                        {"data": "value" },
+                        {"data": "default_value" },
+                        {"data": "desc"},
+                        {"data": "modified"},					
                         {"data": null }
                     ]
                 });

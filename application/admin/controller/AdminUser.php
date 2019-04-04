@@ -2,14 +2,9 @@
 
 namespace app\admin\controller;
 
+use app\common\SystemAdminUser as SU;
+
 class AdminUser extends Base { 
-	
-	protected $result;
-	
-	public function _initialize() {
-		parent::_initialize();
-		$this->result = model('TableInfo')->getTableInfo('gwash.gwash_system_admin_user');
-	}
 	
 	/**
 	 * 
@@ -20,7 +15,7 @@ class AdminUser extends Base {
     	if ($this->request->isGet()) {
     		$this->assign('nickname','');
 	    	$this->assign('status','');
-	    	$this->assign('status_arr',$this->result['status']);
+	    	$this->assign('status_arr', SU::$AdminUser['status']);
 	        return $this->fetch();
     	}
     }	
@@ -86,9 +81,8 @@ class AdminUser extends Base {
 	            'data'            => $listInfo,
 	        );
 	        $this->assign('username',$nickname);
-	        $this->assign('status_arr',$this->result['status']);
 	        $this->assign('status',$status);
-	        $this->ajaxReturn($data, 'json');			
+	        ajaxReturn($data, 'json');			
 		}	
 	}
 
@@ -106,7 +100,7 @@ class AdminUser extends Base {
             $data['mobile'] = input('post.mobile','','trim');  
             $has = model('SystemAdminUser')->where(array('username' => $data['username']))->count(); 
             if ($has) {
-                return $this->ajaxError('用户名已经存在，请重设！');
+                return ajaxError('用户名已经存在，请重设！');
             }
 			$data['password'] = 123456;
             $data['password'] = md5($data['password']);
@@ -114,9 +108,9 @@ class AdminUser extends Base {
             $data['regTime'] = time(); 
             $res = model('SystemAdminUser')->insertGetId($data);
             if ($res === false) {
-            	return $this->ajaxError('操作失败');
+            	return ajaxError('操作失败');
             } else {
-            	return $this->ajaxSuccess('操作成功');
+            	return ajaxSuccess('操作成功');
             }
         } else {
             return $this->fetch();
@@ -135,17 +129,17 @@ class AdminUser extends Base {
 	        $id = input('post.id','0','trim');
 	        $isAdmin = isAdministrator($id);
 	        if ($isAdmin) {
-	            return $this->ajaxError('超级管理员不可以被操作');
+	            return ajaxError('超级管理员不可以被操作');
 	        }
 	        $result = model('SystemAdminUser')->where('id', $id)->find();
 	        if (!$result) {
-	        	return $this->ajaxError('参数非法');
+	        	return ajaxError('参数非法');
 	        }
 	        $res = model('SystemAdminUser')->where('id', $id)->update(array('status' => 0));
 	        if ($res === false) {
-	        	return $this->ajaxError('操作失败');
+	        	return ajaxError('操作失败');
 	        } else {
-	        	return $this->ajaxSuccess('操作成功');
+	        	return ajaxSuccess('操作成功');
 	        }    		
     	}
     } 
@@ -160,17 +154,17 @@ class AdminUser extends Base {
 	        $id = input('post.id','0','trim');
 	        $isAdmin = isAdministrator($id);
 	        if ($isAdmin) {
-	            return $this->ajaxError('超级管理员不可以被操作');
+	            return ajaxError('超级管理员不可以被操作');
 	        }
     		$result = model('SystemAdminUser')->where('id', $id)->find();
 	        if (!$result) {
-	        	return $this->ajaxError('参数非法');
+	        	return ajaxError('参数非法');
 	        }	        
 	        $res = model('SystemAdminUser')->where('id', $id)->update(array('status' => 1));
 	        if ($res === false) {
-	        	return $this->ajaxError('操作失败');
+	        	return ajaxError('操作失败');
 	        } else {
-	        	return $this->ajaxSuccess('操作成功');
+	        	return ajaxSuccess('操作成功');
 	        }   		
     	}
     }  
@@ -185,22 +179,22 @@ class AdminUser extends Base {
     	    $id = input('post.id','0','trim');
 	        $isAdmin = isAdministrator($id);
 	        if ($isAdmin) {
-	            return $this->ajaxError('超级管理员不可以被操作');
+	            return ajaxError('超级管理员不可以被操作');
 	        }
     		$result = model('SystemAdminUser')->where('id', $id)->find();
 	        if (!$result) {
-	        	return $this->ajaxError('参数非法');
+	        	return ajaxError('参数非法');
 	        }
 	        if ($result['status']) {
-	        	return $this->ajaxError("只能删除禁用的管理员");
+	        	return ajaxError("只能删除禁用的管理员");
 	        }	
 	        $res = model('SystemAdminUser')->where(array('id' => $id,'status'=>0))->delete();
 	        if ($res === false) {
-	            return $this->ajaxError('操作失败');
+	            return ajaxError('操作失败');
 	        } else {
 	        	model('SystemAdminUserAction')->where('uid', $id)->delete();
 	        	model('SystemAdminUserData')->where('uid', $id)->delete();	        	
-	            return $this->ajaxSuccess('操作成功');
+	            return ajaxSuccess('操作成功');
 	        }    		
     	}
     }    

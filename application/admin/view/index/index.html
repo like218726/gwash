@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
     <title>{:config('APP_NAME')}管理系统</title>
-    <script src="//cdn.bootcss.com/jquery/3.1.1/jquery.min.js"></script>
+    <script type="text/javascript" src="/static/admin/js/jquery.min.js"></script>
     <link rel="stylesheet" href="/static/admin/plugins/layui/css/layui.css">
     <style>
         .layui-nav-child .layui-nav-item{
@@ -28,15 +28,20 @@
                         进入前台
                     </a>
                 </li>
-                <li class="layui-nav-item"><a href="{:url('system/clear')}" id="clear-cache">清除缓存</a></li>
+				<li class="layui-nav-item"><a href="{:url('system/clear')}" id="clear-cache">清除缓存</a></li>
                 <li class="layui-nav-item">
                     <a href="javascript:;">
-                        {:session('nick_name')}{$real_name ? '['.$real_name.']' : ''}
+                        管理员
                     </a>
                     <dl class="layui-nav-child">
                         <dd class="api-add">
                             <a href="javascript:;">
                                 个人信息
+                            </a>
+                        </dd>
+						<dd class="email">
+                            <a href="javascript:;">
+                               邮件管理
                             </a>
                         </dd>
                         <dd>
@@ -95,6 +100,14 @@
                 content: '{:url("admin/login/changeUser")}',
             });
         });
+        $('.email').on('click', function () {
+            layer.open({
+                type: 2,
+                area: ['80%', '80%'],
+                maxmin: true,
+                content: '{:url("admin/System/email")}',
+            });
+        });		
         var updateTime = '{$userInfo["updateTime"]}';
         if( updateTime == 0 ){
             layer.open({

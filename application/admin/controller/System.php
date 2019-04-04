@@ -5,10 +5,6 @@ namespace app\admin\controller;
 class System extends Base
 {
 	
-	public function _initialize() {
-		parent::_initialize();
-	}	
-	
 	/**
 	 * 
 	 * 列表
@@ -16,9 +12,11 @@ class System extends Base
 	 */
     public function index()
     {
-        $config = model('SystemConfig')->find()->toArray(); 
-        $this->assign('config',$config);
-        return $this->fetch();
+    	if ($this->request->isGet()) {
+    		$config = model('SystemConfig')->find()->toArray(); 
+        	$this->assign('config',$config);
+        	return $this->fetch();
+    	}
     }
 
     /**
@@ -28,21 +26,29 @@ class System extends Base
      */
     public function save()
     {
-        $config = $this->request->post(); 
-        unset($config['file']);
-        $config['site_logo'] = trim($config['site_logo']);
-        if (empty($config['id'])){
-            $res = model('SystemConfig')->add($config);
-        } else {
-            $res = model('SystemConfig')->update($config,array('site_url'=>$config['site_url']));
-        }
-
-        if ($res === false){
-        	return $this->ajaxError('保存失败');
-        }
-        return $this->ajaxSuccess('保存成功');
+    	if ( $this->request->isPost() ) {
+	        $config = $this->request->post(); 
+	        unset($config['file']);
+	        $config['site_logo'] = trim($config['site_logo']);
+	        $config['site_icon'] = trim($config['site_icon']); 
+	        if (empty($config['id'])){
+	            $res = model('SystemConfig')->add($config);
+	        } else {
+	            $res = model('SystemConfig')->update($config,array('site_url'=>$config['site_url']));
+	        }
+	
+	        if ($res === false){
+	        	return ajaxError('保存失败');
+	        }
+	        return ajaxSuccess('保存成功');    		
+    	}
     }
 
+    public function email() 
+    {
+    	
+    }
+    
     /**
      * 
      * 清空缓存

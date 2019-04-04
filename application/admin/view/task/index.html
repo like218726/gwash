@@ -58,7 +58,7 @@
 			<span class="layui-btn layui-btn-normal close"><i class="layui-icon">&#xe608;</i> 关闭</span>
 			<span class="layui-btn layui-btn-normal edit_time"><i class="layui-icon">&#xe608;</i> 批量修改时间</span>
 			<span class="layui-btn layui-btn-normal edit_ip"><i class="layui-icon">&#xe608;</i> 批量修改IP</span>
-			<span class="layui-btn layui-btn-normal is_on"><i class="layui-icon">&#xe608;</i> 总开关</span>
+			<span class="layui-btn layui-btn-normal is_on"><i class="layui-icon">{$total_is_on}</i> 总开关</span>
             <table class="layui-table" id="list-admin" lay-even>
                 <thead>
                 <tr>
@@ -80,7 +80,23 @@
 	<script>
    	$(".resetform").click(function(){
     	$('#form-admin-add')[0].reset();
-   	})		
+   	})	
+	$(document).ready(function(){
+		var url = "./GetRowByCode";
+		$.post(url, {code: 'auto_task_is_on'}, function(data){
+			if(data.code){
+				var row = data.data;
+				var span = $(".is_on").children();
+				if(row.value==0){
+					span.html('&#xe616;');
+				}else{
+					span.html('&#x1007;');
+				}
+			}else{
+				layer.alert(data.msg);
+			}
+		}, "json");					
+	});	
 	</script>	
     <script>
     	
@@ -121,7 +137,7 @@
             $(".api-add").click(function(){
 				layer.confirm('你确定要刷新命令吗?', {title:'刷新命令'}, function(){	
 					$.post("{:url('RefreshCmd')}",function(data){
-						if (data.code == 200) {
+						if (data.code == 1) {
 							location.reload();
 						} else {
 	                        layer.msg(data.msg, {
@@ -147,7 +163,7 @@
 						return false;
 					}	
 					$.post("{:url('open')}",{'ids':ids,'is_on':1},function(data){
-						if (data.code == 200) {
+						if (data.code == 1) {
 							location.reload();
 						} else {
 	                        layer.msg(data.msg, {
@@ -160,14 +176,140 @@
 				})				
             });			
 
-            $(document).on('click', '.edit', function () {
-                var ownObj = $(this);
+            $(".close").click(function(){
+				layer.confirm('你确定要关闭吗?', {title:'关闭'}, function(){
+					var checkObj = $("input[name='task_id']:checked");
+					var ids=''
+					var num = checkObj.length; 
+					checkObj.each(function(){
+						ids += $(this).val()+',';
+					});	
+					if (num<=0) {
+						layer.alert('操作不能为空!',{icon:2});	
+						return false;
+					}	
+					$.post("{:url('open')}",{'ids':ids,'is_on':0},function(data){
+						if (data.code == 1) {
+							location.reload();
+						} else {
+	                        layer.msg(data.msg, {
+	                            icon: 5,
+	                            shade: [0.6, '#393D49'],
+	                            time:1500
+	                        });							
+						}
+					},'json');							
+				})				
+            });	
+
+            $(".edit_time").click(function(){
+				var checkObj = $("input[name='task_id']:checked");
+				var ids=''
+				var num = checkObj.length; 
+				checkObj.each(function(){
+					ids += $(this).val()+',';
+				});	
+				if (num<=0) {
+					layer.alert('操作不能为空!',{icon:2});	
+					return false;
+				}				
                 layer.open({
+					title: '批量修改时间',
                     type: 2,
                     area: ['80%', '80%'],
                     maxmin: true,
-                    content: ownObj.attr('data-url')+'&id='+ownObj.attr('data-id')
-                });
+					content: '{:url("editTime")}?ids='+ids,
+                });				
+            });
+
+            $(".edit_ip").click(function(){
+				var checkObj = $("input[name='task_id']:checked");
+				var ids=''
+				var num = checkObj.length; 
+				checkObj.each(function(){
+					ids += $(this).val()+',';
+				});	
+				if (num<=0) {
+					layer.alert('操作不能为空!',{icon:2});	
+					return false;
+				}				
+                layer.open({
+					title: '批量修改IP',
+                    type: 2,
+                    area: ['80%', '80%'],
+                    maxmin: true,
+					content: '{:url("editIp")}?ids='+ids,
+                });				
+            });
+
+            $(".is_on").click(function(){				
+				var url = "./GetRowByCode";
+				$.post(url, {code: 'auto_task_is_on'}, function(data){
+					if(data.code){
+						var row = data.data;
+						var span = $(".is_on").children();
+						var msg = '';
+						if(row.value==1){
+							span.html('&#x1007;');
+							msg = "确定要关闭系统任务总开关?";
+						}else{
+							span.html('&#xe616;');
+							msg = "确定要开启系统任务总开关?";
+						}
+					}else{
+						layer.alert(data.msg);
+					}	
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					
+									
+					var msg = "";
+					if(data.status==0){
+						$.alert(data.msg);
+						return;
+					}
+					if(data.data.value==1){
+						msg = "{@确定要关闭系统任务总开关?}";
+					}else{
+						msg = "{@确定要开启系统任务总开关?}";
+					}
+					if(!confirm(msg))
+						return;
+					var url = './UpdateAllStatus';
+					$.post(url, {code: 'auto_task_is_on'}, function(data){
+						if(data.status==1){
+							$.alert(data.msg);
+							loadAllStatus();
+						}else{
+							$.alert('异常错误');
+						}
+					}, "json");
+				}, "json");				
+				
+				
+				
+				
+				$.post(url, {code: 'auto_task_is_on'}, function(data){
+					if(data.code){
+						var row = data.data;
+						var span = $(".is_on").children();
+						if(row.value==1){
+							span.html('&#xe616;');
+						}else{
+							span.html('&#x1007;');
+						}
+					}else{
+						layer.alert(data.msg);
+					}
+				}, "json");				
             });
 
             var myFun = function (query) {

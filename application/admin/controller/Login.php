@@ -6,10 +6,6 @@ use think\Loader;
 
 class Login extends Base {
 	
-	public function _initialize() {
-		parent::_initialize();
-	}	
-	
 	/**
 	 * 
 	 * 登陆入口
@@ -34,7 +30,7 @@ class Login extends Base {
 	        $challenge = input('post.geetest_challenge','','trim');
 	        $validate = input('post.geetest_validate','','trim');
 	        if(!$challenge || md5($challenge) != $validate){
-	            return $this->ajaxError('请先通过验证！');
+	            return ajaxError('请先通过验证！');
 	        }
 	
 	        $userInfo = model('SystemAdminUser')->where(array('username' => $user, 'password' => $pass))->find();
@@ -74,12 +70,12 @@ class Login extends Base {
 	                $admin_user_data['last_city'] = GBK2UTF8($ipinfo['country']);
 	                $admin_user_data['login_count'] = $userInfo['login_count'] + 1;
 	                model('SystemAdminUser')->where(array('id' => $userInfo['id']))->update($admin_user_data);	                
-	                return $this->ajaxSuccess('登录成功');
+	                return ajaxSuccess('登录成功');
 	            } else {
-	                return $this->ajaxError('用户已被封禁，请联系管理员');
+	                return ajaxError('用户已被封禁，请联系管理员');
 	            }
 	        } else {
-	            return $this->ajaxError('用户名密码不正确');
+	            return ajaxError('用户名密码不正确');
 	        }    		
     	}
 
@@ -123,9 +119,9 @@ class Login extends Base {
             $res = model('SystemAdminUser')->where(array('id' => session('uid')))->update($newData);
 
             if ($res === false) {
-                return $this->ajaxError('修改失败');
+                return ajaxError('修改失败');
             } else {
-                return $this->ajaxSuccess('修改成功');
+                return ajaxSuccess('修改成功');
             }
         } else { 
             $userInfo = model('SystemAdminUser')->where(array('id' => session('uid')))->find()->toArray(); 

@@ -71,6 +71,7 @@
             $(document).on('click', '.confirm', function () {
                 var ownObj = $(this);
                 layer.confirm(ownObj.attr('data-info'), {
+					title: ownObj.attr('data-title'),
                     btn: ['确定','取消'] //按钮
                 }, function(){
                     $.ajax({
@@ -95,6 +96,7 @@
             $('.api-add').on('click', function () {
                 layer.open({
                     type: 2,
+					title:'新增',
                     area: ['80%', '80%'],
                     maxmin: true,
                     content: '{:url("add")}'
@@ -105,6 +107,7 @@
                 var ownObj = $(this);
                 layer.open({
                     type: 2,
+					title: ownObj.attr('data-title'),
                     area: ['80%', '80%'],
                     maxmin: true,
                     content: ownObj.attr('data-url')+'?id='+ownObj.attr('data-id')
@@ -140,7 +143,7 @@
                             "render": function(data, type, row){
                                 var returnStr = '';   
 								returnStr += '<span class="layui-btn edit" ' +
-                                    'data-id="' + row.id +'"  data-url="{:url(\'rule\')}">访问授权</span>';
+                                    'data-id="' + row.id +'" data-title="访问授权" data-url="{:url(\'rule\')}">访问授权</span>';
 								return returnStr;	
                             }
                         },{
@@ -148,7 +151,7 @@
                             "render": function(data, type, row){
                                 var returnStr = '';   
 								returnStr += '<span class="layui-btn edit" ' +
-                                    'data-id="' + row.id +'" data-url="{:url(\'member\')}">成员授权</span>';
+                                    'data-id="' + row.id +'" data-title="成员授权" data-url="{:url(\'member\')}">成员授权</span>';
 								return returnStr;	
                             }
                         },{
@@ -156,13 +159,13 @@
                             "render":function(data, type, row){
                                 var returnStr = '';
                                 returnStr += '<span class="layui-btn layui-btn-danger confirm" data-info="你确定禁用当前权限组么？" ' +
-                                    'data-id="' + row.id +'" data-url="{:url(\'close\')}">禁用</span>';
+                                    'data-id="' + row.id +'" data-title="禁用" data-url="{:url(\'close\')}">禁用</span>';
 								returnStr += '<span class="layui-btn confirm" data-info="你确定启用当前权限组么？" ' +
-                                    'data-id="' + row.id +'" data-url="{:url(\'open\')}">启用</span>';	
+                                    'data-id="' + row.id +'" data-title="启用" data-url="{:url(\'open\')}">启用</span>';	
 								returnStr += '<span class="layui-btn edit layui-btn-normal" ' +
                                     'data-id="' + row.id +'" data-url="edit.html">编辑</span>';	
                                 returnStr += '<span class="layui-btn layui-btn-danger confirm" ' +
-                                    'data-id="' + row.id +'" data-info="你确定删除当前权限组么？" data-url="{:url(\'del\')}">删除</span>';
+                                    'data-id="' + row.id +'"  data-title="删除" data-info="你确定删除当前权限组么？" data-url="{:url(\'del\')}">删除</span>';
                                 return returnStr;
                             }
                         }

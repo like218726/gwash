@@ -8,57 +8,79 @@
                     <input type="hidden" name="id" value="{$detail['id']}">
                 {/if}
                 <div class="layui-form-item">
+                    <label class="layui-form-label"><span style="color:red">*</span> 模块</label>
+                    <div class="layui-input-block">
+						<select name="module_id" lay-verify=""> 
+							<option value="">请选择</option>   
+							{foreach $module_id as $k=>$v}
+								<option value="{$k}" {if $detail['module_id'] eq $k}selected{/if}>{$v}</option>  
+							{/foreach}                    
+						</select>
+                    </div>
+                </div>				
+                <div class="layui-form-item">
                     <label class="layui-form-label"><span style="color:red">*</span> 名称</label>
                     <div class="layui-input-block">
-                        <input type="text" name="name" required value="{$detail['name'] ? $detail['name'] : ''}" lay-verify="required" placeholder="用于config函数调用，只能使用字母,数字,下划线且不能重复，例如：CONFIG_TYPE_LIST" class="layui-input">
+                        <input type="text" name="name" required value="{$detail['name'] ? $detail['name'] : ''}" lay-verify="required" placeholder="请输入名称" class="layui-input">
                     </div>
                 </div>
                 <div class="layui-form-item">
-                    <label class="layui-form-label"><span style="color:red">*</span> 标题</label>
+                    <label class="layui-form-label"><span style="color:red">*</span> 代码</label>
                     <div class="layui-input-block">
-                        <input type="text" name="title" required value="{$detail['title'] ? $detail['title'] : ''}" lay-verify="required" placeholder="参数字典标题" class="layui-input">
+                        <input type="text" name="code" required value="{$detail['code'] ? $detail['code'] : ''}" lay-verify="required" placeholder="请输入代码" class="layui-input">
                     </div>
-                </div>
+                </div>			
                 <div class="layui-form-item">
                     <label class="layui-form-label"><span style="color:red">*</span> 类型</label>
                     <div class="layui-input-block">
                         <select name="type" lay-verify="">
-                            <option value="0" {if $detail['type'] eq '0'}selected{/if}>数字</option>
-                            <option value="1" {if $detail['type'] eq '1'}selected{/if}>字符</option>
-                            <option value="2" {if $detail['type'] eq '2'}selected{/if}>文本</option>
-                            <option value="3" {if $detail['type'] eq '3'}selected{/if}>数组</option>
-                            <option vvalue="4" {if $detail['type'] eq '4'}selected{/if}>枚举</option>
+                        	<option value="">请选择</option>  
+                            {foreach $type as $k=>$v}
+                            <option value="{$k}" {if $detail['type'] eq $k}selected{/if}>{$v}</option>
+                            {/foreach}
                         </select>						
                      </div>
                 </div>
-
                 <div class="layui-form-item">
                     <label class="layui-form-label"><span style="color:red">*</span> 参数值</label>
                     <div class="layui-input-block">
-                        <textarea rows="8" cols="100" class="textarea" name="value" required value="{$detail['value'] ? $detail['value'] : ''}" lay-verify="required" placeholder="参数值:一行代表一个值；如果是字符串或者数值，直接填写；如果是数组，就需要每行一个键:值，中间用英文引号分割，例如：
-0:数字
-1:字符
-2:文本
-3:数组
-4:枚举" >{$detail['value'] ? $detail['value'] : ''}</textarea>
+                        <input type="text" name="value" required value="{$detail['value'] ? $detail['value'] : '0'}" lay-verify="required" placeholder="请输入参数值" class="layui-input">
                     </div>
-                </div>
-
+                </div>	
                 <div class="layui-form-item">
-                    <label class="layui-form-label"><span style="color:red">*</span> 参数项</label>
+                    <label class="layui-form-label"><span style="color:red">*</span> 是否预设</label>
                     <div class="layui-input-block">
-                        <textarea rows="8" cols="100" class="textarea" name="extra"  value="{$detail['extra'] ? $detail['extra'] : ''}" placeholder="如果是枚举型，需要配置该项,其他类型无需填写该项。参数项:一行代表一个值；每行一个键:值，中间用英文引号分割，例如：
-0:关闭,1:开启" >{$detail['extra'] ? $detail['extra'] : ''}</textarea>
+                        <select name="is_default"  lay-filter="is_default">
+                        	<option value="">请选择</option>  
+                            {foreach $is_default as $k=>$v}
+                            <option value="{$k}" {if $detail['is_default'] eq $k}selected{/if}>{$v}</option>
+                            {/foreach}
+                        </select>						
+                     </div>
+                </div>	
+                <div class="layui-form-item default_value" {if condition="isset($detail['is_default'])"}{if condition="$detail['is_default'] eq 1"}{else /}style="display:none;"{/if}{/if}>
+                    <label class="layui-form-label"> 预设值</label>
+                    <div class="layui-input-block">
+                        <input type="text" name="default_value" required value="{$detail['default_value'] ? $detail['default_value'] : ''}" placeholder="请输入预设值" class="layui-input">
                     </div>
                 </div>
-
                 <div class="layui-form-item">
-                    <label class="layui-form-label"><span style="color:red">*</span> 备注说明</label>
+                    <label class="layui-form-label"><span style="color:red">*</span> 是否显示</label>
                     <div class="layui-input-block">
-                        <textarea rows="8" cols="100" class="textarea" name="remark"  value="{$detail['remark'] ? $detail['remark'] : ''}"  placeholder="备注说明" >{$detail['remark'] ? $detail['remark'] : ''}</textarea>
+                        <select name="is_display"  lay-filter="">
+                        	<option value="">请选择</option>  
+                            {foreach $is_display as $k=>$v}
+                            <option value="{$k}" {if $detail['is_display'] eq $k}selected{/if}>{$v}</option>
+                            {/foreach}
+                        </select>						
+                     </div>
+                </div>												
+                <div class="layui-form-item">
+                    <label class="layui-form-label"><span style="color:red">*</span> 参数描述</label>
+                    <div class="layui-input-block">
+                        <textarea class="layui-textarea" name="desc"  value="{$detail['desc'] ? $detail['desc'] : ''}"  placeholder="请输入参数描述" >{$detail['desc'] ? $detail['desc'] : ''}</textarea>
                     </div>
                 </div>
-
                 <div class="layui-form-item">
                     <div class="layui-input-block">
                         <button class="layui-btn" lay-submit lay-filter="admin-form">立即提交</button>
@@ -73,7 +95,20 @@
 	<script>
    	$(".resetform").click(function(){
     	$('#layui-form')[0].reset();
-   	})		
+   	})	
+	layui.use('form', function(){
+         var form = layui.form();
+		 form.on('select(is_default)', function(data){
+		 	if ( data.value == 1 ) {
+				$(".default_value").show();
+			} else if( data.value == 0 ) {
+				$(".default_value").hide();
+			} else {
+				$(".default_value").show();
+			}
+			form.render();
+		 })
+	})			
 	</script>
     {if condition="isset($detail['id'])"}
         <script>

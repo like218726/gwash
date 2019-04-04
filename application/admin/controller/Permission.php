@@ -2,15 +2,10 @@
 
 namespace app\admin\controller;
 
+use app\common\SystemAuthGroup;
+
 class Permission extends Base {
 
-	protected $result;
-	
-	public function _initialize() {
-		parent::_initialize();
-		$this->result = model('TableInfo')->getTableInfo('gwash.gwash_system_auth_group');
-	}
-	
 	/**
 	 * 
 	 * 列表
@@ -21,7 +16,7 @@ class Permission extends Base {
 			$listInfo = model('SystemAuthGroup')->select();
 	        $this->assign('list', $listInfo);
 	        $this->assign('name','');
-	        $this->assign('status_arr',$this->result['status']);
+	        $this->assign('status_arr', SystemAuthGroup::$AuthGroup['status']);
 	        $this->assign('status','');
 	        return $this->fetch();    		
     	}
@@ -69,9 +64,8 @@ class Permission extends Base {
 	            'data'            => $listInfo,
 	        );
 	        $this->assign('name',$name);
-	        $this->assign('status_arr',$this->result['status']);
 	        $this->assign('status',$status);
-	        $this->ajaxReturn($data, 'json');				
+	        ajaxReturn($data, 'json');				
 		}  	
     }
     
@@ -87,13 +81,13 @@ class Permission extends Base {
         	$data['description'] = input('post.description', '0', 'trim'); 
         	$count = model('SystemAuthGroup')->where(['name'=>$data['name']])->count();
         	if ($count) {
-        		return $this->ajaxError('权限组已存在');
+        		return ajaxError('权限组已存在');
         	}
             $res = model('SystemAuthGroup')->insert($data);
             if ($res === false) {
-                $this->ajaxError('操作失败');
+                ajaxError('操作失败');
             } else {
-                $this->ajaxSuccess('操作成功');
+                ajaxSuccess('操作成功');
             }
         } else {
             return $this->fetch();
@@ -110,13 +104,13 @@ class Permission extends Base {
     		$id = input('post.id', '0', 'trim');
     		$result = model('SystemAuthGroup')->where(['id'=>$id])->count();
     		if (!$result) {
-    			return $this->ajaxError('参数非法');
+    			return ajaxError('参数非法');
     		}
     		$res = model('SystemAuthGroup')->where(array('id' => $id))->update(array('status' => 0));
     		if ($res === false) {
-	            return $this->ajaxError('操作失败');
+	            return ajaxError('操作失败');
 	        } else {
-	            return $this->ajaxSuccess('操作成功');
+	            return ajaxSuccess('操作成功');
 	        }
     	}
     }
@@ -131,13 +125,13 @@ class Permission extends Base {
     		$id = input('post.id', '0', 'trim');
     		$result = model('SystemAuthGroup')->where(['id'=>$id])->count();
     		if (!$result) {
-    			return $this->ajaxError("参数非法");
+    			return ajaxError("参数非法");
     		}
 	    	$res = model('SystemAuthGroup')->where(array('id' => $id))->update(array('status' => 1));
 	        if ($res === false) {
-	            return $this->ajaxError('操作失败');
+	            return ajaxError('操作失败');
 	        } else {
-	            return $this->ajaxSuccess('操作成功');
+	            return ajaxSuccess('操作成功');
 	        }
     	}
     }
@@ -159,16 +153,16 @@ class Permission extends Base {
         	$data['description'] = input('post.description', '0', 'trim');
     	    $result = model('SystemAuthGroup')->where(['id'=>$id])->count();
     	    if (!$result) {
-    	    	return $this->ajaxError('参数非法');   	    	
+    	    	return ajaxError('参数非法');   	    	
     	    }         	
             $res = model('SystemAuthGroup')->where(array('id' => $id))->update($data);
             if ($res === false) {
-                return $this->ajaxError('操作失败');
+                return ajaxError('操作失败');
             } else {
-                return $this->ajaxSuccess('操作成功');
+                return ajaxSuccess('操作成功');
             }
         } else {
-            return $this->ajaxError('非法操作');
+            return ajaxError('非法操作');
         }
     }
 
@@ -182,13 +176,13 @@ class Permission extends Base {
     		$id = input('post.id', '0', 'trim');
     	    $result = model('SystemAuthGroup')->where(['id'=>$id])->count();
     	    if (!$result) {
-    	    	return $this->ajaxError('参数非法');   	    	
+    	    	return ajaxError('参数非法');   	    	
     	    }   	    
 	        $res = model('SystemAuthGroup')->where(array('id' => $id))->delete();
 	        if ($res === false) {
-	            return $this->ajaxError('操作失败');
+	            return ajaxError('操作失败');
 	        } else {
-	        	return $this->ajaxSuccess('操作成功');
+	        	return ajaxSuccess('操作成功');
 	        }    		
     	}
     }
@@ -200,13 +194,13 @@ class Permission extends Base {
         if ($this->request->isPost()) {
             $data = $this->request->post();
             if (!$data['uid']) {
-            	return $this->ajaxError('用户ID不能为空');
+            	return ajaxError('用户ID不能为空');
             }
             if ($data['uid'] == 1) {
-            	return $this->ajaxError("超级管理员不允许操作");
+            	return ajaxError("超级管理员不允许操作");
             }            
             if (!isset($data['groupAccess'])) {
-            	return $this->ajaxError("授权内容不能为空");
+            	return ajaxError("授权内容不能为空");
             }
             $groupAccess = array_keys($data['groupAccess']);
             $groupAccess = implode(',', $groupAccess);
@@ -214,16 +208,16 @@ class Permission extends Base {
             if ($oldArr) {
             	$group = model('SystemAuthGroup')->where(['id'=>$groupAccess])->find();
             	if ($group['status'] == 0) {
-            		return $this->ajaxError('你所属权限组已禁用');
+            		return ajaxError('你所属权限组已禁用');
             	}
                 $insert = model('SystemAuthGroupAccess')->where(array('uid' => $data['uid']))->update(array('groupId' => $groupAccess));
             } else {
                 $insert = model('SystemAuthGroupAccess')->insertGetId(array('uid' => $data['uid'], 'groupId' => $groupAccess));
             }
             if ($insert) {
-                return $this->ajaxSuccess('授权成功');
+                return ajaxSuccess('授权成功');
             } else {
-                return $this->ajaxError('授权失败');
+                return ajaxError('授权失败');
             }
         } elseif ($this->request->isGet()) {    
 			$uid = input('get.id', '0', 'trim');
@@ -235,7 +229,7 @@ class Permission extends Base {
             $this->assign('uid',$uid);
             return $this->fetch();
         } else {  
-            return $this->ajaxError('非法操作');
+            return ajaxError('非法操作');
         }
     }
 
@@ -267,7 +261,7 @@ class Permission extends Base {
             $this->assign('groupId', $groupId);
             return $this->fetch();    		
     	} else {
-    		return $this->ajaxError('非法操作');
+    		return ajaxError('非法操作');
     	}
     }
 
@@ -285,12 +279,12 @@ class Permission extends Base {
             $newData = implode(',', $oldGroupArr);
             $res = model('SystemAuthGroupAccess')->where(array('uid' => $uid))->update(array('groupId' => $newData));
             if ($res === false) {
-                return $this->ajaxError('操作失败');
+                return ajaxError('操作失败');
             } else {
-                return $this->ajaxSuccess('操作成功');
+                return ajaxSuccess('操作成功');
             }
         } else {
-            return $this->ajaxError('非法操作');
+            return ajaxError('非法操作');
         }
     }
 
@@ -302,7 +296,7 @@ class Permission extends Base {
         	$postData = input();
             $groupId = input('post.group', '0' ,'trim'); 
             if (!isset($postData['rule'])) {
-            	return $this->error('权限不能为空');
+            	return ajaxError('权限不能为空');
             }
             $needAdd = array();
             $has = model('SystemAuthRule')->where(array('groupId' => $groupId, 'status'=>1))->select()->toArray();
@@ -326,7 +320,7 @@ class Permission extends Base {
                 $urlArr = array_keys($needDel);
                 model('SystemAuthRule')->where(array('groupId' => $groupId, 'url' => array('in', $urlArr)))->delete();
             }
-            return $this->ajaxSuccess('操作成功');
+            return ajaxSuccess('操作成功');
         } elseif ($this->request->isGet()) {
         	$groupId = input('post.id', '0' ,'trim');
             $has = model('SystemAuthRule')->where(array('groupId' => $groupId, 'status'=>1))->select()->toArray();
@@ -338,7 +332,7 @@ class Permission extends Base {
             $this->assign('list', $list);
             return $this->fetch();
         } else {
-            return $this->ajaxError('非法操作');
+            return ajaxError('非法操作');
         }
     }
 

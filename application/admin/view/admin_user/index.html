@@ -36,6 +36,7 @@
             <table class="layui-table" id="list-admin" lay-even>
                 <thead>
                 <tr>
+                	<th><input type="checkbox" class="check-all" /></th>
                     <th>ID</th>
                     <th>用户账号 </th>
                     <th>所属角色</th>
@@ -58,6 +59,13 @@
 	    	$('#form-admin-add')[0].reset();
     	})
 	    
+		/**
+		 * 通用全选
+		 */
+		$('.check-all').on('click', function () {
+		    $(this).parents('table').find('input[type="checkbox"]').prop('checked', $(this).prop('checked'));
+		});		
+		
 	    /**
 		 * 
 		 * @param {Object} obj
@@ -95,7 +103,7 @@
 
             $('.api-add').on('click', function () {
                 layer.open({
-					title: '添加',
+					title: '新增',
                     type: 2,
                     area: ['80%', '80%'],
                     maxmin: true,
@@ -139,7 +147,14 @@
                     },
                     columnDefs:[
                         {
-                            "targets":9,
+							"targets": 0,
+							"render":function(data, type, row){
+								var returnStr = '';
+								returnStr = '<input type="checkbox" name="id" value="' + row.id+ '">';
+								return returnStr;
+							}	
+						},{
+                            "targets":-1,
                             "render":function(data, type, row){
                                 var returnStr = '';
                                 returnStr += '<span class="layui-btn layui-btn-danger confirm" data-info="你确定禁用当前用户么？" ' +
@@ -157,6 +172,7 @@
                     iDisplayLength : 20,
                     aLengthMenu : [20, 30, 50],
                     columns: [
+						{"data": null},
                         {"data": "id"},
                         {"data": "username"},
                         {"data": "name" },

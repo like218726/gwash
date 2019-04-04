@@ -4,10 +4,6 @@ namespace app\admin\controller;
 
 class Log extends Base {
 	
-	public function _initialize() {
-		parent::_initialize();
-	}
-	
 	/**
 	 * 
 	 * 列表
@@ -54,7 +50,7 @@ class Log extends Base {
 	            'recordsFiltered' => $total,
 	            'data'            => $info
 	        );
-	        $this->ajaxReturn($data, 'json');    		
+	        ajaxReturn($data, 'json');    		
     	}
     }
 
@@ -68,13 +64,13 @@ class Log extends Base {
     		$id = input('post.id','0','trim');
     		$result = model('SystemAdminUserAction')->where('id', $id)->count();
     		if (!$result) {
-    			return $this->ajaxError('参数非法');
+    			return ajaxError('参数非法');
     		}
 	    	$res = model('SystemAdminUserAction')->where('id', $id)->delete();
 	        if ($res === false) {
-	            return $this->ajaxError('操作失败');
+	            return ajaxError('操作失败');
 	        } else {
-	            return $this->ajaxSuccess('操作成功');
+	            return ajaxSuccess('操作成功');
 	        }
     	}
     }

@@ -240,8 +240,8 @@ return [
         'list_rows' => 15,
     ],
     
-    'APP_VERSION' => 'v3.0.3',
-    'VERSION_TIME' => '2019-02-18',
+    'APP_VERSION' => 'v3.3.3',
+    'VERSION_TIME' => '2019-03-27',
     'APP_NAME'    => 'Gwash智能洗眼镜',
 	'COMPANY_NAME' => '深圳市吉图软件开发有限公司',
 	// 后台在线时长设定，超时缓存过期
@@ -252,10 +252,8 @@ return [
     'USER_ADMINISTRATOR' => [1],    
     'CONFIG_TYPE_LIST' => [
     	'0' => '数字',
-    	'1' => '字符',
+    	'1' => '字符串',
     	'2' => '文本',
-    	'3' => '数组',
-    	'4' => '枚举',
     ],
     'AUTH_CONFIG' => [],
     'COPYRIGHT' => 'Copyright © 2014-year company. All rights reserved. ',

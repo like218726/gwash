@@ -41,16 +41,29 @@
                 <div class="layui-form-item">
                     <label class="layui-form-label"><span style="color:red">*</span> 网站描述</label>
                     <div class="layui-input-block">
-                        <textarea rows="7" cols="80" class="site_desc"  name="site_desc" required value="{$config['site_desc'] ? $config['site_desc'] : ''}" lay-verify="required" placeholder="网站描述" >{$config['site_desc'] ? $config['site_desc'] : ''}</textarea>
+                        <textarea class="layui-textarea" name="site_desc" required value="{$config['site_desc'] ? $config['site_desc'] : ''}" lay-verify="required" placeholder="网站描述" >{$config['site_desc'] ? $config['site_desc'] : ''}</textarea>
                     </div>
                 </div>
 
                 <div class="layui-form-item">
-                    <label class="layui-form-label"><span style="color:red">*</span> 网站logo</label>
+                    <label class="layui-form-label"><span style="color:red">*</span> 网站ICON</label>
                     <div class="layui-input-block">
                         <input type="file" name="file" id="uploadFile" class="layui-upload-file">
-                        <input type="text" name="site_logo" id="image_path" style="border: none; width: 0" lay-verify="required">
+                        <input type="text" name="site_icon" id="image_path" style="border: none; width: 0" lay-verify="required">
+						{if $config['site_icon']}
                         <img src="" style = "width:200px;" id="image">
+						{/if}
+                    </div>
+                </div>
+
+                <div class="layui-form-item">
+                    <label class="layui-form-label"><span style="color:red">*</span> 网站LOGO</label>
+                    <div class="layui-input-block">
+                        <input type="file" name="file" id="uploadFile2" class="layui-upload-file">
+                        <input type="text" name="site_logo" id="image_path2" style="border: none; width: 0" lay-verify="required">
+						{if $config['site_logo']}
+                        <img src="" style = "width:200px;" id="image2">
+						{/if}
                     </div>
                 </div>
 
@@ -67,7 +80,7 @@
     <script>
         var host = window.location.host;
         var imageObj = $("#image");
-        var image_path = '{$config["site_logo"]}';
+        var image_path = '{$config["site_icon"]}';
         if (image_path != ''){
             imageObj.attr('src','http://'+host+'/'+image_path);  //
         }
@@ -90,29 +103,56 @@
             layui.upload(options);
         });
 
-            layui.use('form', function(){ 
-                var form = layui.form();
-                form.on('submit(admin-form)', function(data){
-                    $.ajax({
-                        type: "POST",
-                        url: '{:url("save")}',
-                        data: data.field,
-                        success: function(msg){
-                            if( msg.code == 1 ){
-                                document.location.reload();
-                            }else{
-                                parent.layer.msg(msg.msg, {
-                                    icon: 5,
-                                    shade: [0.6, '#393D49'],
-                                    time:1500
-                                });
-                            }
-                        }
-                    });
-                    return false;
-                });
 
+        var imageObj2 = $("#image2");
+        var image_path2 = '{$config["site_logo"]}';
+        if (image_path2 != ''){
+            imageObj2.attr('src','http://'+host+'/'+image_path2);  //
+        }
+		
+        $("#image_path2").val(image_path2);
+
+
+        layui.use('upload', function(){
+            var options = {
+                elem: '#uploadFile2',
+                url: '{:url("upload/index")}',
+                ext: 'jpg|png|jpeg',
+                success: function(res){
+                    console.log(res); //上传成功返回值，必须为json格式
+                    imageObj2.show();
+                    imageObj2.attr('src','http://'+host+'/'+res.image_path);
+                    $("#image_path2").val(res.image_path);
+                }
+            };
+            layui.upload(options);
+        });
+
+        layui.use('form', function(){ 
+            var form = layui.form();
+            form.on('submit(admin-form)', function(data){
+                $.ajax({
+                    type: "POST",
+                    url: '{:url("save")}',
+                    data: data.field,
+                    success: function(msg){
+                        if( msg.code == 1 ){
+							layer.alert(msg.msg, function(){
+								document.location.reload();
+							});
+                        }else{
+                            parent.layer.msg(msg.msg, {
+                                icon: 5,
+                                shade: [0.6, '#393D49'],
+                                time:1500
+                            });
+                        }
+                    }
+                });
+                return false;
             });
+
+        });
      </script>
     <style>
         .site_desc{

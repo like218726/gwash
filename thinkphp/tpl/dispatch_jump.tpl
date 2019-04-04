@@ -39,8 +39,13 @@
             var interval = setInterval(function(){
                 var time = --wait.innerHTML;
                 if(time <= 0) {
-                    location.href = href;
-                    clearInterval(interval);
+                    if(href.indexOf("login/index") != -1){
+                        top.location.href = href;
+                        clearInterval(interval);
+                    }else{
+                        location.href = href;
+                        clearInterval(interval);
+                    }
                 };
             }, 1000);
         })();

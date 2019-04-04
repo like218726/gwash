@@ -1,7 +1,11 @@
 <?php
-if(!defined('SECACHE_SIZE')){
-    define('SECACHE_SIZE','15M');
-}
+/*
+$obj = new \util\Cache('common','D:\work\fluxoms\tmp');
+$obj->set_cache('user_name','阿曼湾');
+$val = $obj->get_cache('user_name');
+*/
+namespace util;
+
 class Secache{
 
     var $idx_node_size = 40;
@@ -21,8 +25,10 @@ class Secache{
     var $ver = '$Rev: 3 $';
     var $name = '系统默认缓存(文件型)';
 	public $_file;
+	private $secache_cache_size;
 
-    function workat($file){
+    function workat($file,$secache_cache_size='15m'){
+		$this->secache_cache_size = $secache_cache_size;
         $this->_file = $file.'.php';
         $this->_bsize_list = array(
             512=>10,
@@ -356,7 +362,7 @@ class Secache{
                 }
             }
 
-            $this->max_size = $this->_parse_str_size(SECACHE_SIZE,15728640); //default:15m
+            $this->max_size = $this->_parse_str_size($this->secache_cache_size,15728640); //default:15m
             $this->_puts($this->header_padding,pack('V1a*',$this->max_size,$this->ver));
 
             ksort($this->_bsize_list);

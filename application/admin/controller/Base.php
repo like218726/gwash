@@ -2,8 +2,6 @@
 
 namespace app\admin\controller;
 
-use think\Hook;
-
 use think\Controller;
 use think\Request;
 
@@ -46,43 +44,6 @@ class Base extends Controller {
      * 自定义初始化函数
      */
     public function myInit(){}    
-    
-    /**
-     * Ajax正确返回，自动添加debug数据
-     * @param $msg
-     * @param array $data
-     * @param int $code
-     */
-    public function ajaxSuccess( $msg, $code = 1, $data = array() ){
-        $returnData = array(
-            'code' => $code,
-            'msg' => $msg,
-            'data' => $data
-        );
-        if( !empty($this->debug) ){
-            $returnData['debug'] = $this->debug;
-        }
-        return json($returnData);
-    }
-
-    /**
-     * Ajax错误返回，自动添加debug数据
-     * @param $msg
-     * @param array $data
-     * @param int $code
-     */
-    public function ajaxError( $msg, $code = 0, $data = array() ){
-        $returnData = array(
-            'code' => $code,
-            'msg' => $msg,
-            'data' => $data
-        );
-        if( !empty($this->debug) ){
-            $returnData['debug'] = $this->debug;
-        }
-
-        return json($returnData);
-    }
 
     /**
      * 将二维数组变成指定key
@@ -116,10 +77,10 @@ class Base extends Controller {
            
             if (empty($this->menuInfo)) {
                 if ($request->isAjax()) {
-                    $this->ajaxError('当前URL非法')->send();
+                    ajaxError('当前URL非法')->send();
                     exit;
                 } else {
-                	return $this->ajaxError('当前URL非法2');
+                	return ajaxError('当前URL非法2');
                 }
             }  
             $this->checkLogin();
@@ -182,7 +143,7 @@ class Base extends Controller {
                 } else {
                     $request = Request::instance();
                     if($request->isAjax()){
-                        $this->ajaxError(lang('没有权限'))->send();
+                        ajaxError(lang('没有权限'))->send();
                         exit;
                     }else{
                         $this->error(lang('没有权限'), 'Login/ruleTip');
@@ -207,46 +168,5 @@ class Base extends Controller {
         );
         model('SystemAdminUserAction')->save($data);
     }
-
-    /**
-     * Ajax方式返回数据到客户端
-     * @access protected
-     * @param mixed $data 要返回的数据
-     * @param String $type AJAX返回数据格式
-     * @param int $json_option 传递给json_encode的option参数
-     * @return void
-     */
-    protected function ajaxReturn($data,$type='',$json_option=0) {
-        if(empty($type)) $type  =   config('DEFAULT_AJAX_RETURN');
-        switch (strtoupper($type)){
-            case 'JSON' :
-                // 返回JSON数据格式到客户端 包含状态信息
-                header('Content-Type:application/json; charset=utf-8');
-                exit(json_encode($data,$json_option));
-            case 'XML'  :
-                // 返回xml格式数据
-                header('Content-Type:text/xml; charset=utf-8');
-                exit(xml_encode($data)); 
-            case 'JSONP':
-                // 返回JSON数据格式到客户端 包含状态信息
-                header('Content-Type:application/json; charset=utf-8');
-                $handler  =   isset($_GET[config('VAR_JSONP_HANDLER')]) ? $_GET[config('VAR_JSONP_HANDLER')] : config('DEFAULT_JSONP_HANDLER');
-                exit($handler.'('.json_encode($data,$json_option).');');  
-            case 'EVAL' :
-                // 返回可执行的js脚本
-                header('Content-Type:text/html; charset=utf-8');
-                exit($data);            
-            default     :
-                // 用于扩展其他返回格式数据
-                Hook::listen('ajax_return',$data);
-        }
-    }    
-    
-	//省市区选择
-	function address_select($el_id = "order_time",$tag = ''){
-		$html = '<span id="addr_select" init="0" data=""></span>';		
-		$html .= "<script>city_select('addr_select','',0);</script>";
-		return $html;
-	}    
-    
+   
 }

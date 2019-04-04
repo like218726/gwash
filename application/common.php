@@ -18,6 +18,7 @@
  *            $exit     是否停止程序继续执行
  * @Return    void
  */
+use think\Hook;
 function xdebug($var, $exit = false, $method = true)
 {
     echo '<meta content-type: "text/html" charset="utf-8" />';
@@ -27,6 +28,70 @@ function xdebug($var, $exit = false, $method = true)
     
 	exit;
     
+}
+
+/**
+ * Ajax方式返回数据到客户端
+ * @access protected
+ * @param mixed $data 要返回的数据
+ * @param String $type AJAX返回数据格式
+ * @param int $json_option 传递给json_encode的option参数
+ * @return void
+ */
+function ajaxReturn($data,$type='',$json_option=0) {
+	if(empty($type)) $type  =   config('DEFAULT_AJAX_RETURN');
+	switch (strtoupper($type)){
+		case 'JSON' :
+			// 返回JSON数据格式到客户端 包含状态信息
+			header('Content-Type:application/json; charset=utf-8');
+			exit(json_encode($data,$json_option));
+		case 'XML'  :
+			// 返回xml格式数据
+			header('Content-Type:text/xml; charset=utf-8');
+			exit(xml_encode($data)); 
+		case 'JSONP':
+			// 返回JSON数据格式到客户端 包含状态信息
+			header('Content-Type:application/json; charset=utf-8');
+			$handler  =   isset($_GET[config('VAR_JSONP_HANDLER')]) ? $_GET[config('VAR_JSONP_HANDLER')] : config('DEFAULT_JSONP_HANDLER');
+			exit($handler.'('.json_encode($data,$json_option).');');  
+		case 'EVAL' :
+			// 返回可执行的js脚本
+			header('Content-Type:text/html; charset=utf-8');
+			exit($data);            
+		default     :
+			// 用于扩展其他返回格式数据
+			Hook::listen('ajax_return',$data); 			
+	}
+} 
+
+/**
+ * Ajax正确返回，自动添加debug数据
+ * @param $msg
+ * @param array $data
+ * @param int $code
+ */
+function ajaxSuccess( $msg, $code = 1, $data = array() ){
+	$returnData = array(
+		'code' => $code,
+		'msg' => $msg,
+		'data' => $data
+	);
+	return json($returnData);
+}
+
+/**
+ * Ajax错误返回，自动添加debug数据
+ * @param $msg
+ * @param array $data
+ * @param int $code
+ */
+function ajaxError( $msg, $code = 0, $data = array() ){
+	$returnData = array(
+		'code' => $code,
+		'msg' => $msg,
+		'data' => $data
+	);
+	return json($returnData);
 }
 
 /**
@@ -149,6 +214,13 @@ function xml_encode($data, $root='think', $item='item', $attr='', $id='id',$enco
     return $xml;
 }
 
+/**
+ * 
+ * 数组转xml
+ * @param unknown_type $data
+ * @param unknown_type $item
+ * @param unknown_type $id
+ */
 function data_to_xml($data, $item='item', $id='id') {
     $xml = $attr = '';
     foreach ($data as $key => $val) {

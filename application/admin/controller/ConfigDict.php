@@ -1,15 +1,14 @@
 <?php
 namespace app\admin\controller;
 
+use app\common\SystemConfigDict;
+
 class ConfigDict extends Base
 {
 	protected $type;
-	protected $result;
 	
 	public function _initialize() {
-		parent::_initialize();
 		$this->type = config('CONFIG_TYPE_LIST');
-		$this->result = model('TableInfo')->getTableInfo('gwash.gwash_system_config_dict');
 	}
 	
     /**
@@ -20,9 +19,8 @@ class ConfigDict extends Base
     {
     	if ($this->request->isGet()) {
     		$this->assign('name','');
-    		$this->assign('status_arr',$this->result['status']);
+    		$this->assign('status_arr',SystemConfigDict::$ConfigDict['status']);
     		$this->assign('status',"");
-    		$this->assign('type',$this->type);
     		return $this->fetch();
     	}
     }
@@ -50,14 +48,15 @@ class ConfigDict extends Base
 				$where['status'] = $status;
 			}
 	
-			$total = model('SystemConfigDict')->order('create_time desc')->where($where)->count(); 
+			$total = model('SystemConfigDict')->order('id', 'desc')->where($where)->count(); 
 
 	        $listInfo = model('SystemConfigDict')->order('id', 'desc')->limit($start, $limit)->where($where)->select();  
 
 	        if ($listInfo) {
 	        	foreach ($listInfo as $key=>$value) {       		
-	                $listInfo[$key]['status'] = $this->status_arr[$value['status']];
+	                $listInfo[$key]['status'] = SystemConfigDict::$ConfigDict['status'][$value['status']];
 	                $listInfo[$key]['type'] = $this->type[$value['type']];
+	                $listInfo[$key]['module_id'] = model('SystemConfigDict')->getModuleId($value['module_id']);
 	        	}
 	        } else {
 	        	$listInfo = '';
@@ -70,9 +69,8 @@ class ConfigDict extends Base
 	            'data'            => $listInfo,
 	        );
 	        $this->assign('name',$name);
-	        $this->assign('status_arr',$this->result['status']);
 	        $this->assign('status',$status);
-	        $this->ajaxReturn($data, 'json');	    		
+	        ajaxReturn($data, 'json');	    		
     	}
     }    
     
@@ -85,18 +83,32 @@ class ConfigDict extends Base
     {
         if($this->request->isPost()){
             $data = input();
-            $data['create_time'] = time();
-            if(model('SystemConfigDict')->insert($data)){
-                cache("DB_CONFIG_DICT_DATA",null);
-                return $this->ajaxSuccess('操作成功');
-            } else {
-                return $this->ajaxError('操作失败');
+            $code_count = model('SystemConfigDict')->where('code', $data['code'])->count();
+            if ( $code_count ) {
+            	return ajaxError('操作失败: 参数代码已经存在');
             }
-
+        	$name_count = model('SystemConfigDict')->where('name', $data['name'])->count();
+            if ( $name_count ) {
+            	return ajaxError('操作失败: 参数名称已经存在');
+            }
+            $result = model('SystemConfigDict')->insert($data);
+            if($result === false) {
+                return ajaxError('操作失败');
+            } else {
+                cache("DB_CONFIG_DICT_DATA",null);
+                return ajaxSuccess('操作成功');
+            }
         }
-        $type = config('CONFIG_TYPE_LIST');
+        $module_id = model('SystemConfigDict')->getModule();
+        $type = config('CONFIG_TYPE_LIST'); 
+		$this->assign("module_id",$module_id); 
 		$this->assign("type",$type); 
 		$detail['type'] = $this->type;
+		$detail['module_id'] = $module_id;
+		$detail['is_default'] = SystemConfigDict::$ConfigDict['is_default'];
+		$this->assign('is_default', SystemConfigDict::$ConfigDict['is_default']);
+		$detail['is_display'] = SystemConfigDict::$ConfigDict['is_display'];
+		$this->assign('is_display', SystemConfigDict::$ConfigDict['is_display']);
 		$this->assign('detail',$detail);
         return $this->fetch("config_dict/add");
     }
@@ -110,23 +122,24 @@ class ConfigDict extends Base
     {
         if( $this->request->isGet() ) {
             $id = input('get.id', '0', 'trim');
-            if( $id ){
-                $detail = model('SystemConfigDict')->where('id', $id)->find();
-                $this->assign('detail', $detail);
-                return $this->fetch('config_dict/add');
-            }else{
-                $this->redirect('config_dict/add');
-            }
+	        $module_id = model('SystemConfigDict')->getModule();
+	        $type = config('CONFIG_TYPE_LIST'); 
+			$this->assign("module_id",$module_id); 
+			$this->assign("type",$type); 
+			$this->assign('is_default', SystemConfigDict::$ConfigDict['is_default']);
+			$this->assign('is_display', SystemConfigDict::$ConfigDict['is_display']);            
+            $detail = model('SystemConfigDict')->where('id', $id)->find();
+            $this->assign('detail', $detail); 
+            return $this->fetch('config_dict/add');
         } else if($this->request->isPost()){
-            $data = $this->request->post();
-            $data['id'] = input($data['id'], 0 , 'trim'); 
-            $data['update_time'] = time();
-            $res = model('SystemConfigDict')->where('id', $id)->update($data);
+            $data = $this->request->post(); 
+            $data['status'] = 1;
+            $res = model('SystemConfigDict')->save($data,['id'=>$data['id']]);
             if( $res === false ) {
-                return $this->ajaxError('操作失败');
+                return ajaxError('操作失败');
             } else {
                 cache("DB_CONFIG_DICT_DATA",null);
-                return $this->ajaxSuccess('操作成功');
+                return ajaxSuccess('操作成功');
             }
 
         }
@@ -134,9 +147,9 @@ class ConfigDict extends Base
     }
 
     /**
+     * 
      * 删除参数字典
-     * @author wzj
-     *  2018/3/13
+     * 
      */
     public function del()
     {
@@ -144,22 +157,22 @@ class ConfigDict extends Base
     		$id = input('post.id', 0 , 'trim');
     		$result = model('SystemConfigDict')->where('id', $id)->count();
     		if (!$result) {
-    			return $this->ajaxError('参数非法');
+    			return ajaxError('参数非法');
     		}
     		$res = model('SystemConfigDict')->where('id', $id)->delete();
 	        if ($res === false) {
-	            return $this->ajaxError('操作失败');
+	            return ajaxError('操作失败');
 	        } else {
 	            cache("DB_CONFIG_DICT_DATA",null);
-	            return $this->ajaxSuccess('操作成功');
+	            return ajaxSuccess('操作成功');
 	        }
     	}
     }
 
     /**
+     * 
      * 禁用
-     * @author wzj
-     * 2018/3/12
+     * 
      */
     public function close()
     {
@@ -167,38 +180,38 @@ class ConfigDict extends Base
     		$id = input('post.id', 0 , 'trim');
     		$result = model('SystemConfigDict')->where('id', $id)->count();
     		if (!$result) {
-    			return $this->ajaxError('参数非法');
+    			return ajaxError('参数非法');
     		}
 	    	$res = model('SystemConfigDict')->where('id', $id)->update(array('status' => 0));
 	        if ($res === false) {
-	            return $this->ajaxError('操作失败');
+	            return ajaxError('操作失败');
 	        } else {
 	            cache("DB_CONFIG_DICT_DATA",null);
-	            return $this->ajaxSuccess('操作成功');
+	            return ajaxSuccess('操作成功');
 	        }
     	}
     }
 
     /**
+     * 
      * 启用
-     * @author
-     * 2018/3/12
+     * 
      */
     public function open()
     {
     	if ($this->request->isPost()) {
     		$id = input('post.id', 0 , 'trim');
   
-    		$result = Db::name('system_config_dict')->where('id', $id)->count();
+    		$result = model('SystemConfigDict')->where('id', $id)->count();
     		if (!$result) {
-    			return $this->ajaxError('参数非法');
+    			return ajaxError('参数非法');
     		}
-	    	$res = Db::name('system_config_dict')->where('id', $id)->update(array('status' => 1));
+	    	$res = model('SystemConfigDict')->where('id', $id)->update(array('status' => 1));
 	        if ($res === false) {
-	            return $this->ajaxError('操作失败');
+	            return ajaxError('操作失败');
 	        } else {
 	            cache("DB_CONFIG_DICT_DATA",null);
-	            return $this->ajaxSuccess('操作成功');
+	            return ajaxSuccess('操作成功');
 	        }
     	}
     }
