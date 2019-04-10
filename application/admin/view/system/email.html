@@ -1,0 +1,200 @@
+{include file="public/base" /}
+<block name="main">
+    <fieldset class="layui-elem-field">
+        <legend>系统配置 - 邮件管理</legend>
+    	<pre class="layui-code">
+设置邮件账号需要注意如下内容:
+1.发件人和收件人均为带@的全名称
+2.多个收件人请用英文逗号,分隔。例如：xx@139.com,ss@163.com,hh@letv.com,ll@sina.com
+3.发送失败请检查用户名密码、25端口时候被禁用、邮箱已开启POP3功能
+4.多个收件人名称请用英文逗号,分隔。如果某一个收件人没有名称则默认不填例如：join,tom,,ben
+5.多个收件人和多个收件人名称填写时,需按照顺序填写。例如：
+  收件人:xx@139.com,ss@163.com
+  收件人名称:join,tom
+  则表示收件人xx@139.com的名称是join,ss@163.com的名称是tom
+		</pre> 		
+        <div class="layui-field-box">
+            <form class="layui-form" action="" enctype="multipart/form-data">
+                <input type="hidden" name="id" value="{$config['id']}">
+                <div class="layui-form-item">
+                    <label class="layui-form-label"><span style="color:red">*</span> 发件人</label>
+                    <div class="layui-input-block">
+                        <input type="text" id="sender" name="sender" required value="{$config['sender'] ? $config['sender']: ''}" lay-filter="sender" lay-verify="required|email" maxlength="50" placeholder="请填写发件人" class="layui-input">
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <label class="layui-form-label"><span style="color:red">*</span> 服务器</label>
+                    <div class="layui-input-block">
+                        <input type="text" id="server" name="server" required value="{$config['server'] ? $config['server']: ''}" lay-verify="required" maxlength="150" placeholder="请填写服务器" class="layui-input">
+                    </div>
+                </div>				
+                <div class="layui-form-item">
+                    <label class="layui-form-label"><span style="color:red">*</span> 收件人</label>
+                    <div class="layui-input-block">
+                        <input type="text" name="receiver" required value="{$config['receiver'] ? $config['receiver']: ''}" lay-verify="required" placeholder="请填写收件人" class="layui-input">
+                    </div>
+                </div>
+				<div class="layui-form-item">
+                    <label class="layui-form-label"><span style="color:red">*</span> 收件人名称</label>
+                    <div class="layui-input-block">
+                        <input type="text" name="receiver_name" required value="{$config['receiver_name'] ? $config['receiver_name']: ''}" lay-verify="required" placeholder="请填写收件人名称" class="layui-input">
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <label class="layui-form-label"><span style="color:red">*</span> 是否加密</label>
+                    <div class="layui-input-block">
+                        <input type="radio" lay-filter="is_ssl" name="is_ssl" value="1" title="是" {if condition="$config['is_ssl'] eq 1"}checked{/if}>
+      					<input type="radio" lay-filter="is_ssl" name="is_ssl" value="0" title="否" {if condition="$config['is_ssl'] eq 0"}checked{/if}>
+                    </div>
+                </div>
+                <div class="layui-form-item" id="port">
+                    <label class="layui-form-label"> 端口</label>
+                    <div class="layui-input-block">
+                         <input type="text" name="port" value="{$config['port'] ? $config['port']: 25}" placeholder="请填写端口" maxlength="4" class="layui-input">
+                    </div>
+                </div>
+                <div class="layui-form-item" id="ssl_port">
+                    <label class="layui-form-label">加密端口</label>
+                    <div class="layui-input-block">
+                         <input type="text" name="ssl_port" value="{$config['ssl_port'] ? $config['ssl_port']: 465}"  maxlength="4" placeholder="请填写加密端口" class="layui-input">
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <label class="layui-form-label"><span style="color:red">*</span> 是否授权</label>
+                    <div class="layui-input-block">
+                        <input type="radio" lay-filter="is_auth" name="is_auth" value="1" title="是" {if condition="$config['is_auth'] eq 1"}checked{/if}>
+      					<input type="radio" lay-filter="is_auth" name="is_auth" value="0" title="否" {if condition="$config['is_auth'] eq 0"}checked{/if}>
+                    </div>
+                </div>
+                <div class="layui-form-item" id="password">
+                    <label class="layui-form-label"> 密码</label>
+                    <div class="layui-input-block">
+                         <input type="text" name="password" value="{$config['password'] ? $config['password']: ''}" placeholder="请填写密码" class="layui-input">
+                    </div>
+                </div>
+                <div class="layui-form-item" id="auth_code">
+                    <label class="layui-form-label"> 授权码</label>
+                    <div class="layui-input-block">
+                         <input type="text" name="auth_code" value="{$config['auth_code'] ? $config['auth_code']: ''}" placeholder="请填写授权码" class="layui-input">
+                    </div>
+                </div>
+
+                <div class="layui-form-item">
+                    <div class="layui-input-block">
+                        <button class="layui-btn" lay-submit lay-filter="admin-form">保存</button>
+						<button class="layui-btn" lay-submit lay-filter="admin-send">测试发送</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </fieldset>
+</block>
+<block name="myScript">
+<script>
+$(document).ready(function(){
+	var is_ssl = '{$config["is_ssl"]}';
+	if (is_ssl == 0) {
+		$("#port").show();
+		$("#ssl_port").hide();		
+	} else {
+		$("#ssl_port").show();
+		$("#port").hide();		
+	}
+	
+	var is_auth = '{$config["is_auth"]}';
+	if (is_auth == 0) {
+		$("#password").show();
+		$("#auth_code").hide();		
+	} else {
+		$("#auth_code").show();
+		$("#password").hide();		
+	}	
+})	
+layui.use('form', function(){ 
+    var form = layui.form();
+	
+	//是否ssl
+	form.on('radio(is_ssl)', function(data){ 
+		if (data.value == 0) {
+			$("#port").show();
+			$("#ssl_port").hide();
+		} 
+		if (data.value == 1) {
+			$("#ssl_port").show();
+			$("#port").hide();
+		}
+	  	form.render();
+	})
+	
+	//是否授权
+	form.on('radio(is_auth)', function(data){
+		if (data.value == 0) {
+			$("#password").show();
+			$("#auth_code").hide();
+		} else {
+			$("#auth_code").show();
+			$("#password").hide();
+		}
+	  	form.render();
+	})
+	
+	//发件人
+	$(document).on('blur', '#sender', function () {
+		var sender = $('#sender').val();
+		if (sender != '') {
+			if(!sender.indexOf("@")>=0){
+				var suffix = sender.split("@");
+				var text = 'smtp.'+suffix[1].substring(0);
+				$("#server").val(text);
+			} else {
+				layer.alert('发件人格式错误');
+			}	
+		}
+	})
+	
+	//提交
+    form.on('submit(admin-form)', function(data){
+        $.ajax({
+            type: "POST",
+            url: '{:url("email")}',
+            data: data.field,
+            success: function(msg){
+               if( msg.code == 1 ){
+                    parent.location.reload();
+                }else{
+                    parent.layer.msg(msg.msg, {
+                        icon: 5,
+                        shade: [0.6, '#393D49'],
+                        time:1500
+                    });
+                }
+            }
+        });
+        return false;
+    });
+	
+	//测试发送邮件
+    form.on('submit(admin-send)', function(data){
+        $.ajax({
+            type: "POST",
+            url: '{:url("send")}',
+            data: data.field,
+            success: function(msg){
+               if( msg.code == 1 ){
+			   		layer.alert('发送成功');
+			   		location.reload();
+                }else{
+                    parent.layer.msg(msg.msg, {
+                        icon: 5,
+                        shade: [0.6, '#393D49'],
+                        time:1500
+                    });
+                }
+            }
+        });
+        return false;
+    });	
+})
+	
+</script>
+</block>

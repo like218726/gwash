@@ -294,7 +294,7 @@ class Permission extends Base {
     public function rule() {
         if ($this->request->isPost()) {
         	$postData = input();
-            $groupId = input('post.group', '0' ,'trim'); 
+            $groupId = input('post.groupId', '0' ,'trim'); 
             if (!isset($postData['rule'])) {
             	return ajaxError('权限不能为空');
             }

@@ -54,7 +54,7 @@
                     $.ajax({
                         type: "POST",
                         url: ownObj.attr('data-url'),
-                        data: {uid:ownObj.attr('data-uid'),groupId:attr('data-groupId')},
+                        data: {uid:ownObj.attr('data-uid'), groupId:ownObj.attr('data-groupId')},
                         success: function(msg){
                             if( msg.code == 1 ){
                                 location.reload();

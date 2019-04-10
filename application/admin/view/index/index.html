@@ -31,7 +31,7 @@
 				<li class="layui-nav-item"><a href="{:url('system/clear')}" id="clear-cache">清除缓存</a></li>
                 <li class="layui-nav-item">
                     <a href="javascript:;">
-                        管理员
+                        {:session('nick_name')}{$real_name ? '['.$real_name.']' : ''}
                     </a>
                     <dl class="layui-nav-child">
                         <dd class="api-add">
@@ -97,6 +97,7 @@
                 type: 2,
                 area: ['80%', '80%'],
                 maxmin: true,
+				title: '个人信息',
                 content: '{:url("admin/login/changeUser")}',
             });
         });
@@ -105,10 +106,12 @@
                 type: 2,
                 area: ['80%', '80%'],
                 maxmin: true,
+				title: '邮件管理',
                 content: '{:url("admin/System/email")}',
             });
         });		
         var updateTime = '{$userInfo["updateTime"]}';
+//		layer.alert('登录失败！请输入正确账号或密码', {icon: 6,time:3000});
         if( updateTime == 0 ){
             layer.open({
                 title: '初次登陆请重置密码！',

@@ -18,6 +18,8 @@
  *            $exit     是否停止程序继续执行
  * @Return    void
  */
+use PHPMailer\src\PHPMailer;
+use PHPMailer\src\Exception;
 use think\Hook;
 function xdebug($var, $exit = false, $method = true)
 {
@@ -28,6 +30,76 @@ function xdebug($var, $exit = false, $method = true)
     
 	exit;
     
+}
+
+/**
+ * 
+ * 邮件发送
+ * @param unknown_type $sender 发件人
+ * @param unknown_type $server 服务器
+ * @param unknown_type $receiver 收件人
+ * @param unknown_type $receiver_name 收件人名称
+ * @param unknown_type $is_auth 是否授权
+ * @param unknown_type $password 密码/授权码
+ * @param unknown_type $is_ssl 是否加密发送
+ * @param unknown_type $port 加密端口,端口
+ * @param unknown_type $subject 主题
+ * @param unknown_type $body 内容
+ * @param unknown_type $altbody 该属性的设置是在邮件正文不支持HTML的备用显示
+ * @param unknown_type $attachment 附件
+ */
+function send_email ($sender, $server, $receiver, $receiver_name=[], $is_auth=0, $password, $is_ssl=0, $port=25, $subject, $body, $altbody, $attachment) {
+	vendor('PHPMailer.src.PHPMailer');
+	vendor('PHPMailer.src.Exception');
+	vendor('PHPMailer.src.SMTP');
+	$mail = new PHPMailer(true);
+	try {
+	    //Server settings
+	    $mail->SMTPDebug = 2;                                 // Enable verbose debug output
+	    $mail->isSMTP();                                      // Set mailer to use SMTP
+	    $mail->Host = $server;  // Specify main and backup SMTP servers
+	    if ($is_auth == 1) {
+	    	$mail->SMTPAuth = true;                               // Enable SMTP authentication
+	    }
+	    $mail->Username = $sender;                 // SMTP username
+	    $mail->Password = $password;                           // SMTP password
+	    if ($is_ssl == 1) {
+		    $mail->SMTPSecure = 'ssl';                            // Enable TLS encryption, `ssl` also accepted
+		    $mail->Port = $port;                                    // TCP port to connect to
+	    } else {
+	    	$mail->Port = $port; 
+	    }
+	    
+	    //Recipients
+	    if ($receiver_name) {
+	    	foreach ($receiver as $k=>$v) {
+	    		$mail->setFrom($v, $receiver_name[$k]);
+	    		$mail->addAddress($v);
+	    	}
+	    } else {
+	    	$mail->setFrom($v);               // Name is optional
+	    	$mail->addAddress($v);
+	    }
+
+	    //Attachments
+	    if ($attachment) {
+	    	//需要解决附件为图片,下载后无法打开的问题
+//	    	foreach ($attachment as $k=>$v) {
+//	    		$mail->addAttachment($v['attachment_file'], $v['attachment_name']);         // Add attachments
+//	    	}
+	    }
+	
+	    //Content
+	    $mail->isHTML(true);                                  // Set email format to HTML
+	    $mail->Subject = $subject;
+	    $mail->Body    = $body;
+	    $mail->AltBody = $altbody;
+	
+	    $mail->send();
+	    return ['code'=>'200', 'msg'=>'Message has been sent'];
+	} catch (Exception $e) {
+		return ['code'=>'101', 'msg'=>'Message could not be sent. Mailer Error:'. $mail->ErrorInfo];
+	}	 
 }
 
 /**
