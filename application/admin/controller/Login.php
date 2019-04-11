@@ -2,6 +2,8 @@
 
 namespace app\admin\controller;
 
+use think\Db;
+
 use think\Loader;
 
 class Login extends Base {
@@ -33,34 +35,31 @@ class Login extends Base {
 	            return ajaxError('请先通过验证！');
 	        }
 	
-	        $userInfo = model('SystemAdminUser')->where(array('username' => $user, 'password' => $pass))->find();
+	        $userInfo = model('SystemAdminUser')->where(['username' => $user, 'password' => $pass])->find();
 	
 	        if (!empty($userInfo)) {
-	            if ($userInfo['status']) {
+	            if ($userInfo['status'] == 1) {
 	
 	                //保存用户信息和登录凭证
 	                cache($userInfo['id'], session_id(), config('ONLINE_TIME'));
 	                session('uid', $userInfo['id']);
 	                session('nick_name', $userInfo['nickname']);
 	                session('real_name', $userInfo['realname']);
-	
-	                //更新用户数据
-	                $userData = model('SystemAdminUserData')->where(array('uid' => $userInfo['id']))->find();
-	                $data = array();
-	                
+
 	                $ip = $this->request->ip();
-	
+	                
+	                //更新用户数据
+	                $userData = model('SystemAdminUserData')->where(['uid' => $userInfo['id']])->find();
+	                $data = array();	                
+                    
+                    $data['lastLoginIp'] = $ip;
+                    $data['lastLoginTime'] = time();
+ 
 	                if ($userData) {
-	                    $data['loginTimes'] = $userData['loginTimes'] + 1;
-	                    $data['lastLoginIp'] = $ip;
-	                    $data['lastLoginTime'] = time();
-	                    model('SystemAdminUserData')->where(array('uid' => $userInfo['id']))->update($data);
+	                	$data['loginTimes'] = $userData['loginTimes'] + 1;	                    
 	                } else {
-	                    $data['loginTimes'] = 1;
 	                    $data['uid'] = $userInfo['id'];
-	                    $data['lastLoginIp'] = $ip;
-	                    $data['lastLoginTime'] = time();
-	                    model('SystemAdminUserData')->save($data);
+	                    $data['loginTimes'] = 1;
 	                }
 	                Loader::import('ip.IpLocation', EXTEND_PATH, '.class.php');  
 		    		$iplocation = new \IpLocation();
@@ -69,8 +68,21 @@ class Login extends Base {
 	                $admin_user_data['last_login'] = time();
 	                $admin_user_data['last_city'] = GBK2UTF8($ipinfo['country']);
 	                $admin_user_data['login_count'] = $userInfo['login_count'] + 1;
-	                model('SystemAdminUser')->where(array('id' => $userInfo['id']))->update($admin_user_data);	                
-	                return ajaxSuccess('登录成功');
+	                
+	                Db::startTrans();
+	                try {
+	                	if ($userData) {
+	                		model('SystemAdminUserData')->save($data, ['uid' => $userInfo['id']]);
+	                	} else {
+	                		model('SystemAdminUserData')->save($data);
+	                	}
+	                	model('SystemAdminUser')->save($admin_user_data,['id' => $userInfo['id']]);	
+	                	Db::commit();
+	                	return ajaxSuccess('登录成功');
+	                } catch (\Exception $e) {
+	                	Db::rollback();
+	                	return ajaxError('登录失败:'.$e->getMessage());
+	                }
 	            } else {
 	                return ajaxError('用户已被封禁，请联系管理员');
 	            }
@@ -116,7 +128,7 @@ class Login extends Base {
                 $newData['password'] = md5($data['password']);
                 $newData['updateTime'] = time();
             }
-            $res = model('SystemAdminUser')->where(array('id' => session('uid')))->update($newData);
+            $res = model('SystemAdminUser')->where(['id' => session('uid')])->update($newData);
 
             if ($res === false) {
                 return ajaxError('修改失败');
@@ -124,7 +136,7 @@ class Login extends Base {
                 return ajaxSuccess('修改成功');
             }
         } else { 
-            $userInfo = model('SystemAdminUser')->where(array('id' => session('uid')))->find()->toArray(); 
+            $userInfo = model('SystemAdminUser')->where(['id' => session('uid')])->find(); 
             return $this->fetch("changeUser",["uname"=>$userInfo['username'], "userinfo"=>$userInfo]);
         }    	
     } 
