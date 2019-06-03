@@ -33,6 +33,35 @@ function xdebug($var, $exit = false, $method = true)
 }
 
 /**
+ *
+ * 是否为IP
+ * @param $ip
+ *
+ */
+function is_ip ($ip) {
+    if (preg_match('/^\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}(,\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})*?/', $ip)) {
+        return true;
+    } else {
+        return false;
+    }
+}
+
+/**
+ *
+ * 是否为整型
+ * @param mixed $var
+ * @return bool
+ *
+ */
+function isInt($var) {
+    if (!is_numeric($var)) {
+        return false;
+    } elseif (preg_match("/^[0-9]+(.00)?$/", $var)) {
+        return true;
+    }
+}
+
+/**
  * 
  * 邮件发送
  * @param unknown_type $sender 发件人

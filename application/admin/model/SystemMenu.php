@@ -13,7 +13,7 @@ class SystemMenu extends Model {
 	 * 
 	 * 
 	 */
-	public function getMenuInfoById($id,$status) {
+	public function getMenuInfoById($id,$status=[]) {
 		$result = $this->where(['id'=>$id])->find();
 		$result ? $result['status'] = $status[$result['status']] : "";
 		return $result;

@@ -4,7 +4,9 @@ namespace app\admin\model;
 use think\Model;
 
 class SystemConfigDict extends Model {
-
+	
+	public $table = 'gwash_system_config_dict';
+	
     /**
      * 
      * 获取参数字典列表

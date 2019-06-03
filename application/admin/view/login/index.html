@@ -115,7 +115,7 @@
         </div>
         <div class="layui-form-item">
             <button type="reset" class="layui-btn btn-reset layui-btn-danger" >重置</button>
-            <button type="button" class="layui-btn btn-submit" lay-submit="" lay-filter="sub">立即登录</button>
+            <button type="submit" class="layui-btn btn-submit" lay-submit="" lay-filter="sub">立即登录</button>
         </div>
     </form>
 </div>
@@ -141,10 +141,10 @@
         });
 
         form.on('submit(sub)', function (data) {
-            $.post("/Login/login",data.field,function(res){
+            $.post("{:url('login')}",data.field,function(res){
                 if(res.code > 0){
                     layer.msg(res.msg,{time:1800},function(){
-                        location.href = "/Index/index";
+                        location.href = "{:url('Index/index')}";
                     });
                 }else{
                     layer.msg(res.msg,{time:1800});
@@ -173,8 +173,9 @@
             $("#wait")[0].className = "hide";
         });
     };
+	var query = '?t=' + (new Date()).getTime();
     $.ajax({
-        url: "/Verification/gt?t=" + (new Date()).getTime(),
+		url: '{:url("Verification/gt")}'+query,
         type: "get",
         dataType: "json",
         success: function (data) {

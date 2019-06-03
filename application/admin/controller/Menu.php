@@ -81,7 +81,7 @@ class Menu extends Base {
         if ($this->request->isPost()) {
             $data = $this->request->post();
             $data['status'] = isset($data['status']) ? 1 : 0;  
-            $menu_info = model('SystemMenu')->getMenuInfoById($data['fid']);
+            $menu_info = model('SystemMenu')->getMenuInfoById($data['fid'], SystemMenu::$SystemMenu['status']);
             $data['level'] = $menu_info['level']==0 ? 1 : ($menu_info['level']==1 ? 2 : 0);
             $res = model('SystemMenu')->insert($data);
             if ($res === false) {
@@ -158,7 +158,7 @@ class Menu extends Base {
         } elseif ($this->request->isPost()) {
             $postData = $this->request->post();
             $postData['status'] = isset($postData['status']) ? 1 : 0;  
-            $menu_info = model('SystemMenu')->getMenuInfoById($postData['fid']);
+            $menu_info = model('SystemMenu')->getMenuInfoById($postData['fid'], SystemMenu::$SystemMenu['status']);
             $data['level'] = $menu_info['level']==0 ? 1 : ($menu_info['level']==1 ? 2 : 0);
             $res = model('SystemMenu')->where(array('id' => $postData['id']))->update($postData);
             if ($res === false) {

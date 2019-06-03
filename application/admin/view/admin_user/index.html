@@ -131,7 +131,7 @@
                     searching:false,
                     serverSide: true,
                     ajax: {
-                        url:'ajaxGetIndex' + query,
+                        url:'{:url("ajaxGetIndex")}' + query,
                         type: 'GET',
                         dataSrc: function ( json ) {
                             if( json.code == 0 ){

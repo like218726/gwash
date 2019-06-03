@@ -5,6 +5,7 @@ namespace app\admin\controller;
 use app\common\SystemAutoTask;
 
 use app\admin\model\SystemTaskModel;
+use think\Db;
 
 class Task extends Base{
 	
@@ -228,7 +229,16 @@ class Task extends Base{
 
 			if ($result != count(explode(",", $ids))) {
 				return ajaxError("参数非法");
-			}	
+			}
+
+			if (!$lx_time) {
+                return ajaxError("轮询时间不能为空");
+            }
+
+			if (!isInt($lx_time)) {
+                return ajaxError("轮询时间只能为整数");
+            }
+
 			$result = model('SystemTaskModel')->where('task_id', 'in', $ids)->update(['lx_time'=>$lx_time]);
 			if ($result === false) { 
 				return ajaxError("操作失败");
@@ -256,7 +266,12 @@ class Task extends Base{
 
 			if ($result != count(explode(",", $ids))) {
 				return ajaxError("参数非法");
-			}	
+			}
+
+			if (!is_ip($allow_ips)) {
+			    return ajaxError("IP格式非法");
+            }
+
 			$result = model('SystemTaskModel')->where('task_id', 'in', $ids)->update(['allow_ips'=>$allow_ips]);
 			if ($result === false) { 
 				return ajaxError("操作失败");
@@ -280,6 +295,34 @@ class Task extends Base{
 				return ajaxError("没有总任务记录");
 			}
 			return ajaxSuccess('操作成功' ,1 ,$row);
+		}
+	}
+
+	/**
+	 * 更新总开关
+	 * Enter description here ...
+	 */
+	public function UpdateAllStatus()
+	{
+		if ($this->request->isPost()) {
+			$code = input('post.code', '', 'trim');
+			$value= input('post.value', '', 'trim');
+			$configDict = model('SystemConfigDict')->get(['code'=>$code]);
+			if (empty($configDict)) {
+				return ajaxError('没有总任务记录');
+			} 
+			$is_on = ($value==0) ? 1 : 0;
+			Db::startTrans();
+			try {				
+                model('SystemConfigDict')->save(['value'=>$is_on],['code'=>$code]);
+                model('SystemTaskModel')->killAll();
+                $task_is_on = model('SystemConfigDict')->where(['code'=>$code])->value('value');
+                Db::commit();
+                return ajaxSuccess("操作成功", 1, ['is_on'=>$task_is_on]);
+            } catch (\Exception $e) {
+                Db::rollback();
+                return ajaxError("操作失败:".$e->getMessage());
+            }
 		}
 	}	
 }

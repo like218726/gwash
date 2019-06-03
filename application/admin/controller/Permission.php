@@ -325,7 +325,7 @@ class Permission extends Base {
         	$groupId = input('post.id', '0' ,'trim');
             $has = model('SystemAuthRule')->where(array('groupId' => $groupId, 'status'=>1))->select()->toArray();
             $hasRule = array_column($has, 'url');
-            $originList = model('SystemMenu')->where('status', 0)->order('sort desc')->select()->toArray();
+            $originList = model('SystemMenu')->where('status', 0)->order('sort desc, id asc')->select()->toArray();
 
             $list = listToTree($originList);
             $this->assign('hasRule', $hasRule);
