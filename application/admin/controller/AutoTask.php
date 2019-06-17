@@ -12,7 +12,7 @@ class AutoTask extends Base{
 	 * Enter description here ...
 	 */
 	public function RunOneCommand()
-	{
+	{   
 	
 		$params = input();
 

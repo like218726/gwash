@@ -1,0 +1,79 @@
+{include file="public/base" /}
+<body style="background:#FFF;" >
+<style>
+#cmd_div,pre{margin:0;font-size:12px;}
+</style>
+<div style="" id="cmd_div">
+	<input type='hidden' id='task_id' value='{$task_id}'/>
+	<input type='hidden' id='log_file_offset' value='0'/>
+</div>
+
+<script type="text/javascript">
+function get_run_result(){
+	var task_id = $("#task_id").val();
+	var log_file_offset = $("#log_file_offset").val();
+	var req_data = {'task_id':task_id,'log_file_offset':log_file_offset,'_req_tag': new Date().getTime()}
+	var url = "{$baseUrl}/RunCmdScript/GetRunResult";
+	$.get(url, req_data ,function(return_str){
+		var result = process_return_str(return_str);
+		if (!result){
+			setTimeout('get_run_result()', 2000);
+		}
+	});
+}
+
+function process_return_str(return_str){
+	if (return_str == undefined || return_str == '')
+	{
+		return false;
+	}
+	var find_v = return_str.indexOf("####");
+	var log_file_offset = return_str.substr(0,find_v);
+	var html_str = return_str.slice(find_v+4);
+	$("#log_file_offset").val(log_file_offset);
+
+	html_str2 = html_str.replace(/\+/gim,' ');
+	html_str2 = html_str2.replace(/<##php_cli_task_end##>([^<]+)<\/##php_cli_task_end##>/gim,' ');
+	$("#cmd_div").append('<pre>'+html_str2+'</pre>');
+	
+	//console.log(html_str);
+	if (html_str.indexOf('<##php_cli_task_end##>')>-1){
+		html_str = html_str.replace("\n",'');
+		html_str = html_str.replace("\n",'');
+	    html_str = html_str.replace("\r",'');
+
+	    /(.*)<##php_cli_task_end##>([^<]+)/gim.exec(html_str);
+	    //console.log(RegExp.$2);
+		
+		if (RegExp.$2 != '')
+		{
+			try{
+				parent.task_end_callback();			
+			 } catch(e) {}
+			//act value
+			var json_obj = $.parseJSON(RegExp.$2);
+			if (json_obj['act'] == 'gourl'){
+				location.href = json_obj['value'];
+			}
+			if (json_obj['act'] == 'show'){
+				$("#cmd_div").append("<div style='color:red;'>"+json_obj['value']+"</div>");
+				scroll(0, 100000);
+			} 
+			return true;
+		}	    
+	}
+	
+
+	scroll(0, 100000);
+	return false;
+}
+
+get_run_result();
+
+String.prototype.trim=function(){
+	return this.replace(/(^\s*)|(\s*$)/g, "");
+}
+</script>
+
+</body>
+</html>
